@@ -1,4 +1,4 @@
-# This is our Website
+# Stock Trader
 
 ## Created by:
 - **[Antonio Subašić](https://github.com/antoniosubasic)**
