@@ -8,7 +8,7 @@ async function hash(data) {
 
 class Users {
     static _users = null;
-    static _endpoint = 'http://localhost:3000/users';
+    static _endpoint = 'http://localhost:8000/users';
 
     static async load() {
         const response = await fetch(this._endpoint);
