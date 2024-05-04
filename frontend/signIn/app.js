@@ -2,6 +2,7 @@ import endpoint from '../config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const signinForm = document.getElementById('signin-form');
+    const errorMessage = document.getElementById('error-message');
 
     signinForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = '../home';
         } else {
             console.log(`${response.status} - ${await response.text()}`);
+            errorMessage.innerHTML = '<p>Invalid username or password</p>';
         }
     });
 });

@@ -35,8 +35,23 @@
                         required
                     />
                 </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label"
+                        >Confirm Password</label
+                    >
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="confirmPassword"
+                        required
+                    />
+                </div>
+                <div class="mb-3" id="error-message"></div>
                 <button type="submit" class="btn btn-primary">Sign Up</button>
             </form>
+            <button class="btn">
+                <a href="../signIn">Already have an account?</a>
+            </button>
         </main>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
