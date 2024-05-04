@@ -12,3 +12,11 @@ main {
     gap: 1rem;
     height: 100svh;
 }
+
+#error-message {
+    color: red;
+}
+
+main button a {
+    text-decoration: none;
+}
