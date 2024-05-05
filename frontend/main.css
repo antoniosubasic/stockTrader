@@ -12,16 +12,3 @@ main {
     gap: 1rem;
     height: 80svh;
 }
-
-#error-message {
-    color: red;
-}
-
-.link {
-    text-decoration: none;
-}
-
-.home-arrow {
-    height: 2rem;
-    width: auto;
-}

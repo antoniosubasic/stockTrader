@@ -1,0 +1,30 @@
+main > h2 {
+    margin-bottom: 1.5rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#error-message {
+    color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form > button {
+    width: 100%;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.home-arrow {
+    height: 2rem;
+    width: auto;
+}
