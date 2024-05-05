@@ -1,19 +1,19 @@
 import endpoint from '../config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const signinForm = document.getElementById('signup-form');
+    const signUpForm = document.getElementById('signup-form');
     const errorMessage = document.getElementById('error-message');
 
-    signinForm.addEventListener('submit', async (e) => {
+    signUpForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const username = signinForm.username.value;
-        const password = signinForm.password.value;
-        const confirmPassword = signinForm.confirmPassword.value;
+        const username = signUpForm.username.value;
+        const password = signUpForm.password.value;
+        const confirmPassword = signUpForm.confirmPassword.value;
 
         if (password !== confirmPassword) {
             errorMessage.innerHTML = '<p>Passwords do not match</p>';
-            signinForm.confirmPassword.value = signinForm.password.value = '';
+            signUpForm.confirmPassword.value = signUpForm.password.value = '';
             return;
         }
 
