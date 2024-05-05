@@ -1,44 +1,40 @@
-import { sha512 } from 'js-sha512';
+import cryptojs from 'crypto-js';
 import { Controller as UserController } from '../controllers/userController.js';
 
 const userController = new UserController();
+const hash = (password) => cryptojs.SHA512(password).toString();
 
 export class User {
-    _signedIn = false;
+    _id;
+    _name;
+    _balance;
 
-    constructor(name, password) {
-        this._name = name;
-        this._password = password;
+    static from(user) {
+        const newUser = new User();
+        newUser._id = user.id;
+        newUser._name = user.name;
+        newUser._balance = user.balance;
+        return newUser;
     }
 
-    signIn() {
-        if (this._signedIn) {
-            return [400, 'user is already signed in'];
-        }
-
-        const user = userController.get(this._name);
+    static signIn(username, password) {
+        const user = userController.get(username);
 
         if (!user) {
-            return [404, 'user not found'];
-        } else if (user.password !== sha512(this._password)) {
-            return [401, 'password is incorrect'];
+            return [null, [404, 'user not found']];
+        } else if (user.password !== hash(password)) {
+            return [null, [401, 'password is incorrect']];
         } else {
-            this._signedIn = true;
-            const { password, ...userData } = user;
-            return [200, userData];
+            return [User.from(user), [200, 'signin successful']];
         }
     }
 
-    signOut() {
-        this._signedIn = false;
-    }
-
-    static signUp(name, password) {
-        if (userController.get(name)) {
+    static signUp(username, password) {
+        if (userController.get(username)) {
             return [400, 'user already exists'];
         }
 
-        userController.create(name, sha512(password));
+        userController.create(username, hash(password));
         return [200, 'user created'];
     }
 
@@ -47,7 +43,7 @@ export class User {
 
         if (!user) {
             return [404, 'user not found'];
-        } else if (user.password !== sha512(password)) {
+        } else if (user.password !== hash(password)) {
             return [401, 'password is incorrect'];
         } else {
             userController.delete(name);
