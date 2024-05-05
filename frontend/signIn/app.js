@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (response.ok) {
             window.location.href = "../home";
+            localStorage.setItem("user", JSON.stringify(await response.json()));
         } else {
             errorMessage.innerHTML = `<p>${await response.text()}</p>`;
             signInForm.password.value = '';

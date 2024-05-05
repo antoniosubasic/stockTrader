@@ -4,20 +4,20 @@ import cors from 'cors';
 import { User } from '../models/userModel.js';
 
 const port = 8000;
-
 const app = express();
+
 app.use(bodyParser.json());
 app.use(cors());
 
-let user = new User();
-
 app.post('/user/signin', (req, res) => {
     const { username, password } = req.body;
+    const [user, [status, message]] = User.signIn(username, password);
 
-    user = new User(username, password);
-    const [status, message] = user.signIn();
-
-    return res.status(status).send(message);
+    if (user) {
+        return res.status(status).json(user);
+    } else {
+        return res.status(status).send(message);
+    }
 });
 
 app.post('/user/signup', (req, res) => {
