@@ -1,4 +1,4 @@
-import endpoint from '../config.js';
+import endpoint from '../scripts/config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const signUpForm = document.getElementById('signup-form');

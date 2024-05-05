@@ -1,4 +1,4 @@
-import endpoint from "../config.js";
+import endpoint from "../scripts/config.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const signInForm = document.getElementById("signin-form");
@@ -20,11 +20,27 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (response.ok) {
-            window.location.href = "../dashboard";
-            localStorage.setItem("user", JSON.stringify(await response.json()));
+            const currentUser = localStorage.getItem("user");
+            const newUser = JSON.stringify(await response.json());
+
+            console.log(currentUser);
+            console.log(newUser);
+
+            if (currentUser === newUser) {
+                errorMessage.innerHTML = "<p>User already signed in</p>";
+            } else if (currentUser) {
+                errorMessage.innerHTML =
+                    "<p>Another user is already signed in</p>";
+            } else {
+                window.location.href = "../dashboard";
+                localStorage.setItem(
+                    "user",
+                    newUser
+                );
+            }
         } else {
             errorMessage.innerHTML = `<p>${await response.text()}</p>`;
-            signInForm.password.value = '';
+            signInForm.password.value = "";
         }
     });
 });
