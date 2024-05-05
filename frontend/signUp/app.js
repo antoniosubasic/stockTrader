@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     signUpForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        errorMessage.innerHTML = "";
 
         const username = signUpForm.username.value;
         const password = signUpForm.password.value;
@@ -28,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok) {
             window.location.href = '../signIn';
         } else {
-            console.log(`${response.status} - ${await response.text()}`);
-            errorMessage.innerHTML = '<p>Username already exists</p>';
+            errorMessage.innerHTML = `<p>${await response.text()}</p>`;
+            signUpForm.password.value = signUpForm.confirmPassword.value = '';
         }
     });
 });

@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     signInForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        errorMessage.innerHTML = "";
 
         const username = signInForm.username.value;
         const password = signInForm.password.value;
@@ -21,14 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.ok) {
             window.location.href = "../home";
         } else {
-            let error = `${response.status} - ${await response.text()}`;
-            console.log(error);
-
-            if (error === "400 - user is already signed in") {
-                errorMessage.innerHTML = "<p>User is already signed in</p>";
-            } else {
-                errorMessage.innerHTML = "<p>Username or password is incorrect</p>";
-            }
+            errorMessage.innerHTML = `<p>${await response.text()}</p>`;
+            signInForm.password.value = '';
         }
     });
 });
