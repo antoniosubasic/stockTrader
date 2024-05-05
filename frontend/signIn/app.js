@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (response.ok) {
-            window.location.href = "../home";
+            window.location.href = "../dashboard";
             localStorage.setItem("user", JSON.stringify(await response.json()));
         } else {
             errorMessage.innerHTML = `<p>${await response.text()}</p>`;
