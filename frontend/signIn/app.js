@@ -23,9 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const currentUser = localStorage.getItem("user");
             const newUser = JSON.stringify(await response.json());
 
-            console.log(currentUser);
-            console.log(newUser);
-
             if (currentUser === newUser) {
                 errorMessage.innerHTML = "<p>User already signed in</p>";
             } else if (currentUser) {
