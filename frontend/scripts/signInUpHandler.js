@@ -3,11 +3,10 @@ function checkUser() {
     const signInUpDiv = document.getElementById("signInUp-container");
 
     const location = window.location.pathname;
-    let path = `.${
-        ["markets", "dashboard"].some((str) => location.includes(str))
+    let path = `.${["markets", "dashboard"].some((str) => location.includes(str))
             ? "."
             : ""
-    }`;
+        }`;
 
     if (user) {
         const userName = JSON.parse(user)._name;
@@ -24,18 +23,18 @@ function checkUser() {
             </ul>
         </div>
         `;
-        document.getElementById("logOut").addEventListener("click", logOut);
+
+        document.getElementById("logOut").addEventListener("click", () => {
+            localStorage.removeItem("user");
+            window.location.reload();
+        });
+
     } else {
         signInUpDiv.innerHTML = `
         <a href="${path}/signIn/" class="btn btn-outline-primary" role="button" aria-disabled="true">Sign In</a>
         <a href="${path}/signUp/" class="btn btn-outline-primary" role="button" aria-disabled="true" style="margin-left: 1rem">Sign Up</a>
         `;
     }
-}
-
-function logOut() {
-    localStorage.removeItem("user");
-    checkUser();
 }
 
 document.addEventListener("DOMContentLoaded", checkUser);
