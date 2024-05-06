@@ -13,13 +13,13 @@ function checkUser() {
 
         signInUpDiv.innerHTML = `
         <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;">
                 <img src="${path}/img/blank-profile.png"class="rounded-circle" style="height: 2rem; margin-right: 0.5rem;"> Hello, ${userName}
             </button>
       
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="${path}/dashboard/userSettings"><img src="${path}/img/settings.png" style="height: 1rem; margin-right: 0.5rem;"> Settings</a></li>
-                <li><button class="dropdown-item btn btn-outline-primary" id="logOut"><img src="${path}/img/logout.webp" style="height: 1rem; margin-right: 0.5rem;"> Log Out</button></li>
+                <li><a class="dropdown-item btn settings" href="${path}/dashboard/userSettings"><img src="${path}/img/settings.png" style="height: 1rem; margin-right: 0.5rem;"> Settings</a></li>
+                <li><button class="dropdown-item btn settings" id="logOut"><img src="${path}/img/logout.webp" style="height: 1rem; margin-right: 0.5rem;"> Log Out</button></li>
             </ul>
         </div>
         `;
@@ -31,8 +31,8 @@ function checkUser() {
 
     } else {
         signInUpDiv.innerHTML = `
-        <a href="${path}/signIn/" class="btn btn-outline-primary" role="button" aria-disabled="true">Sign In</a>
-        <a href="${path}/signUp/" class="btn btn-outline-primary" role="button" aria-disabled="true" style="margin-left: 1rem">Sign Up</a>
+        <a href="${path}/signIn/" class="btn signInUp" role="button" aria-disabled="true" style="border: 0;">Log in</a>
+        <a href="${path}/signUp/" class="btn signInUp" role="button" aria-disabled="true" style="border: 2px black solid; border-radius: 2rem;">Sign up</a>
         `;
     }
 }

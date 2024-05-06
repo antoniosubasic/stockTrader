@@ -1,0 +1,26 @@
+.active {
+    color: #2a86f8 !important;
+    font-weight: 600;
+}
+
+.nav-link:hover {
+    color: #2a86f8 !important;
+}
+
+.signInUp {
+    font-weight: 650;
+    padding: 0.15rem 1.3rem;
+}
+
+.signInUp:hover {
+    color: #2a86f8 !important;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.479);
+    background-color: #eff2f5;
+}
+
+.settings:hover {
+    color: #2a86f8 !important;
+}
