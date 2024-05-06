@@ -13,14 +13,58 @@
             crossorigin="anonymous"
         />
         <link rel="stylesheet" href="../../main.css" />
+        <link rel="stylesheet" href="../../navbar.css" />
+        <link rel="stylesheet" href="./userSettings.css" />
         <script type="module" src="./app.js" defer></script>
     </head>
     <body>
-        <button class="btn" style="margin: 1rem 0 0 1rem ;">
-            <a href="../"><img src="../../img/left_arrow.png" class="home-arrow"/></a>
+        <nav class="navbar navbar-expand-md">
+            <div class="container-fluid">
+                <img src="../../img/logo.png" class="navbar-brand img-fluid" />
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbar"
+                    aria-controls="navbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../markets/"
+                                >Markets</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../">Dashboard</a>
+                        </li>
+                    </ul>
+                    <div id="signInUp-container">
+                        <button class="btn settings" id="logOut">
+                            <img
+                                src="../../img/logout.png"
+                                style="height: 1rem; margin-right: 0.5rem"
+                            />
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <button class="btn" style="margin: 1rem 0 0 1rem">
+            <a href="../"
+                ><img src="../../img/left_arrow.png" class="home-arrow"
+            /></a>
         </button>
-        <main>
-            <h2>User Settings</h2>
-        </main>
+        <article>
+            <h1 id="heading">Settings</h1>
+        </article>
     </body>
 </html>
