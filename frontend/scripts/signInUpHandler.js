@@ -18,7 +18,7 @@ function checkUser() {
             </button>
       
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#"><img src="${path}/img/settings.png" style="height: 1rem; margin-right: 0.5rem;"> Settings</a></li>
+                <li><a class="dropdown-item" href="${path}/dashboard/userSettings"><img src="${path}/img/settings.png" style="height: 1rem; margin-right: 0.5rem;"> Settings</a></li>
                 <li><button class="dropdown-item btn btn-outline-primary" id="logOut"><img src="${path}/img/logout.webp" style="height: 1rem; margin-right: 0.5rem;"> Log Out</button></li>
             </ul>
         </div>
