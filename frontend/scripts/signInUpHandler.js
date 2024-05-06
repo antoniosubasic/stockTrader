@@ -14,7 +14,7 @@ function checkUser() {
         signInUpDiv.innerHTML = `
         <div class="dropdown">
             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="${path}/img/blank-profile.png"class="rounded-circle" style="height: 1.5rem;"> Hello, ${userName}
+                <img src="${path}/img/blank-profile.png"class="rounded-circle" style="height: 2rem; margin-right: 0.5rem;"> Hello, ${userName}
             </button>
       
             <ul class="dropdown-menu">
