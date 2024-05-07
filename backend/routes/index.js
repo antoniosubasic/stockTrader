@@ -46,11 +46,6 @@ app.get('/market', async (req, res) => {
     return status === 200 ? res.status(status).json(data) : res.status(status).send(message);
 });
 
-app.get('/markets', async (_, res) => {
-    const [data, [status, message]] = await Market.getAll();
-    return status === 200 ? res.status(status).json(data) : res.status(status).send(message);
-});
-
 app.listen(port, () => {
     console.log(`server running on port ${port}`);
 });
