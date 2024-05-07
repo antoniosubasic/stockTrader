@@ -1,4 +1,3 @@
-signInUpHandler.js
 function checkUser() {
     const user = localStorage.getItem("user");
     const signInUpDiv = document.getElementById("signInUp-container");
