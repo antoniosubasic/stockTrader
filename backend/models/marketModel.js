@@ -19,7 +19,7 @@ export class Market {
         const market = marketController.get(this._symbol);
 
         if (!market.stockPrices || (market.stockPrices[market.stockPrices.length - 1].timestamp + 86_400_000 * 2) < new Date()) {
-            await marketController.fetch(this._symbol, 365);
+            await marketController.fetchStockPrices(this._symbol, 365);
         }
 
         return [marketController.get(this._symbol), [200, 'market data retrieved']];
@@ -30,7 +30,7 @@ export class Market {
 
         for (const market of markets) {
             if (!market.stockPrices || (market.stockPrices[market.stockPrices.length - 1].timestamp + 86_400_000 * 2) < new Date()) {
-                await marketController.fetch(market.symbol, 365);
+                await marketController.fetchStockPrices(market.symbol, 365);
             }
         }
 
