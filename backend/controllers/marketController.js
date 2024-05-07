@@ -2,6 +2,7 @@ import fs from 'fs';
 
 const marketsFile = './data/markets.json';
 const apiKeyFile = './data/apikey';
+const stockPricesFolder = './data/stockPrices';
 
 const dateToISO = date => date.toISOString().split('T')[0];
 
@@ -12,17 +13,32 @@ export class Controller {
     constructor() {
         this._markets = JSON.parse(fs.readFileSync(marketsFile));
         this._apiKey = fs.readFileSync(apiKeyFile);
+
+        this._markets.forEach(market => {
+            const stockPriceFile = `${stockPricesFolder}/${market.symbol}.json`;
+            if (fs.existsSync(stockPriceFile)) {
+                market.stockPrices = JSON.parse(fs.readFileSync(stockPriceFile));
+            }
+        });
     }
 
     save() {
-        fs.writeFileSync(marketsFile, JSON.stringify(this._markets));
+        var stockPrices = this._markets.map(market => ({
+            symbol: market.symbol,
+            stockPrices: market.stockPrices
+        }));
+
+        stockPrices.filter(stockPrice => stockPrice.stockPrices).forEach(stockPrice => {
+            const stockPriceFile = `${stockPricesFolder}/${stockPrice.symbol}.json`;
+            fs.writeFileSync(stockPriceFile, JSON.stringify(stockPrice.stockPrices));
+        });
     }
 
     get(symbol) {
         return this._markets.find(market => market.symbol === symbol);
     }
 
-    async fetch(symbol, daysAgo) {
+    async fetchStockPrices(symbol, daysAgo) {
         const end = new Date();
         end.setDate(end.getDate() + 1);
 
