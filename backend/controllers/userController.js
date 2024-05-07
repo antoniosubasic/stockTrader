@@ -13,8 +13,8 @@ export class Controller {
         fs.writeFileSync(file, JSON.stringify(this._users));
     }
 
-    get(name = null) {
-        return name ? this._users.find(user => user.name === name) : this._users;
+    get(name) {
+        return this._users.find(user => user.name === name);
     }
 
     create(name, password) {
@@ -31,5 +31,9 @@ export class Controller {
     delete(name) {
         this._users = this._users.filter(user => user.name !== name);
         this.save();
+    }
+
+    get users() {
+        return this._users;
     }
 }

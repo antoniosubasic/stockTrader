@@ -18,8 +18,8 @@ export class Controller {
         fs.writeFileSync(marketsFile, JSON.stringify(this._markets));
     }
 
-    get(symbol = null) {
-        return symbol ? this._markets.find(market => market.symbol === symbol) : this._markets;
+    get(symbol) {
+        return this._markets.find(market => market.symbol === symbol);
     }
 
     async fetch(symbol, daysAgo) {
@@ -35,5 +35,9 @@ export class Controller {
         const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }) => ({ open, close, high, low, timestamp }));
         this.get(symbol).stockPrices = stockPrices;
         this.save();
+    }
+
+    get markets() {
+        return this._markets;
     }
 }
