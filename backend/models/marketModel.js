@@ -24,4 +24,16 @@ export class Market {
 
         return [marketController.get(this._symbol), [200, 'market data retrieved']];
     }
+
+    static async getAll() {
+        const markets = marketController.markets;
+
+        for (const market of markets) {
+            if (!market.stockPrices || (market.stockPrices[market.stockPrices.length - 1].timestamp + 86_400_000 * 2) < new Date()) {
+                await marketController.fetch(market.symbol, 365);
+            }
+        }
+
+        return [markets, [200, 'markets data retrieved']];
+    }
 }
