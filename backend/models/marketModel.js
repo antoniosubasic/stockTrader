@@ -10,6 +10,12 @@ export class Market {
     }
 
     async get() {
+        const markets = marketController.markets;
+
+        if (!markets.find(market => market.symbol === this._symbol)) {
+            return [404, 'market not found'];
+        }
+
         const market = marketController.get(this._symbol);
         
         if (!market.stockPrices || (market.stockPrices[market.stockPrices.length - 1].timestamp + 86_400_000 * 2) < new Date()) {
