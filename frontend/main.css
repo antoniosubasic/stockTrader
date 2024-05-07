@@ -13,11 +13,6 @@ main {
     height: 80svh;
 }
 
-.navbar-brand {
-    height: 3.5rem;
-    margin-right: 3rem;
-}
-
 .link {
     text-decoration: none;
 }
