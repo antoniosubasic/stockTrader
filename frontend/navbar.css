@@ -24,3 +24,9 @@
 .settings:hover {
     color: #2a86f8 !important;
 }
+
+.navbar-brand {
+    height: 3.5rem;
+    margin-right: 3rem;
+}
+
