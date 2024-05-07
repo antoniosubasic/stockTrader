@@ -17,7 +17,7 @@ export class Market {
         }
 
         const market = marketController.get(this._symbol);
-        
+
         if (!market.stockPrices || (market.stockPrices[market.stockPrices.length - 1].timestamp + 86_400_000 * 2) < new Date()) {
             await marketController.fetch(this._symbol, 365);
         }
