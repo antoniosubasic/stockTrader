@@ -4,8 +4,8 @@ function checkUser() {
 
     const location = window.location.pathname;
     let path = `.${["markets", "dashboard"].some((str) => location.includes(str))
-            ? "."
-            : ""
+        ? "."
+        : ""
         }`;
 
     if (user) {
