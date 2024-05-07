@@ -48,9 +48,11 @@ export class Controller {
         const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${dateToISO(start)}/${dateToISO(end)}/?adjusted=true&sort=asc&limit=50000&apiKey=${this._apiKey}`);
         const data = await response.json();
 
-        const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }) => ({ open, close, high, low, timestamp }));
-        this.get(symbol).stockPrices = stockPrices;
-        this.save();
+        if (data.results) {
+            const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }) => ({ open, close, high, low, timestamp }));
+            this.get(symbol).stockPrices = stockPrices;
+            this.save();
+        }
     }
 
     get markets() {
