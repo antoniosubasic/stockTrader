@@ -13,7 +13,7 @@ export class Market {
         const markets = marketController.markets;
 
         if (!markets.find(market => market.symbol === this._symbol)) {
-            return [404, 'market not found'];
+            return [null, [404, 'market not found']];
         }
 
         const market = marketController.get(this._symbol);
