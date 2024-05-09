@@ -11,6 +11,7 @@
             integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
             crossorigin="anonymous"
         />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
         <link rel="stylesheet" href="../assets/styles/navbar.css" />
         <link rel="stylesheet" href="../assets/styles/main.css" />
         <script type="module" src="../assets/scripts/navbar.js" defer></script>
@@ -58,9 +59,24 @@
             </div>
         </nav>
         <article>
-            <div>
-                <h1 id="market-name"></h1>
-                <table id="stock-prices-table"></table>
+            <div id="market-div" style="margin: 5rem 20rem">
+                <h1>Markets</h1>
+
+                <form class="d-flex" role="search" id="search-form">
+                    <input
+                        class="form-control me-2"
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                        id="search"
+                        required
+                    />
+                    <button class="btn btn-outline-success" type="submit">
+                        Search
+                    </button>
+                </form>
+
+                <div id="chart"></div>
             </div>
         </article>
         <script
