@@ -16,12 +16,10 @@ export class Market {
             return [null, [404, 'market not found']];
         }
 
-        const market = marketController.get(this._symbol);
+        const [responseCode, responseMessage] = await marketController.fetchStockPrices(this._symbol);
 
-        if (!market.stockPrices || (market.stockPrices[market.stockPrices.length - 1].timestamp + 86_400_000 * 2) < new Date()) {
-            await marketController.fetchStockPrices(this._symbol, 365);
-        }
-
-        return [marketController.get(this._symbol), [200, 'market data retrieved']];
+        return responseCode !== 200 && responseCode !== 304
+            ? [null, [responseCode, responseMessage]]
+            : [marketController.get(this._symbol), [200, 'market data retrieved']];
     }
 }
