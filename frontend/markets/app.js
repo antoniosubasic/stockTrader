@@ -18,7 +18,7 @@ async function init() {
         if (value) {
             const filteredMarkets = markets.filter(
                 (market) =>
-                    market.symbol.includes(value) || market.name.includes(value)
+                    market.symbol.toLowerCase().includes(value.toLowerCase()) || market.name.toLowerCase().includes(value.toLowerCase())
             );
             filteredMarkets.forEach((market) => {
                 const resultItem = document.createElement("p");
@@ -49,7 +49,7 @@ async function init() {
         const enteredValue = searchForm.search.value;
         resultsDiv.innerHTML = "";
         const market = markets.find(
-            (m) => m.name === enteredValue || m.symbol === enteredValue
+            (m) => m.name.toLowerCase() === enteredValue.toLowerCase() || m.symbol.toLowerCase() === enteredValue.toLowerCase()
         );
         const symbol = market ? market.symbol : "";
         searchForm.search.value = `${market.name}`;

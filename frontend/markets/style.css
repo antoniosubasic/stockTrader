@@ -42,3 +42,7 @@
 .result-item:hover {
     background-color: #eff2f5; 
 }
+
+#search {
+    width: 25rem;
+}
