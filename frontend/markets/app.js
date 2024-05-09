@@ -2,11 +2,64 @@ import endpoint from "../assets/scripts/config.js";
 
 async function init() {
     const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("search");
+    const resultsDiv = document.getElementById("results");
+
+    const response = await fetch(`${endpoint}/markets`);
+    let markets;
+    if (response.ok) {
+        markets = await response.json();
+    }
+
+    searchInput.addEventListener("input", (e) => {
+        const value = e.target.value;
+        resultsDiv.innerHTML = "";
+        const newDiv = document.createElement("div");
+        if (value) {
+            const filteredMarkets = markets.filter(
+                (market) =>
+                    market.symbol.includes(value) || market.name.includes(value)
+            );
+            filteredMarkets.forEach((market) => {
+                const resultItem = document.createElement("p");
+                resultItem.classList.add("result-item");
+                resultItem.textContent = `${market.name} (${market.symbol})`;
+
+                resultItem.addEventListener("click", () => {
+                    searchForm.search.value = `${market.name}`;
+                    resultsDiv.innerHTML = "";
+                    performSearch(market.symbol);
+                });
+
+                newDiv.appendChild(resultItem);
+            });
+
+            if (newDiv.children.length > 10) {
+                resultsDiv.innerHTML = `<p>Too many results</p>`;
+            } else if (newDiv.children.length === 0) {
+                resultsDiv.innerHTML = `<p>No results</p>`;
+            } else {
+                resultsDiv.appendChild(newDiv);
+            }
+        }
+    });
 
     searchForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const symbol = searchForm.search.value;
+        const enteredValue = searchForm.search.value;
+        resultsDiv.innerHTML = "";
+        const market = markets.find(
+            (m) => m.name === enteredValue || m.symbol === enteredValue
+        );
+        const symbol = market ? market.symbol : "";
+        searchForm.search.value = `${market.name}`;
 
+        performSearch(symbol);
+    });
+}
+
+async function performSearch(symbol) {
+    if (symbol !== "") {
         const marketDiv = document.getElementById("chart");
         const drawer = new Drawer(symbol, marketDiv);
 
@@ -15,7 +68,9 @@ async function init() {
         } else {
             console.error("failed to get market data");
         }
-    });
+    } else {
+        console.error("market not found");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", init);
@@ -26,7 +81,6 @@ class Drawer {
         this.marketDiv = marketDiv;
         this.market;
         this.stockPrices;
-
     }
 
     async getMarket() {
@@ -55,7 +109,11 @@ class Drawer {
 
         const labels = this.stockPrices
             .map((stockPrice) =>
-                new Date(stockPrice.timestamp).toLocaleDateString('de-AT', { year: 'numeric', month: '2-digit', day: '2-digit' })
+                new Date(stockPrice.timestamp).toLocaleDateString("de-AT", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                })
             )
             .slice(-days);
 
@@ -73,24 +131,37 @@ class Drawer {
                         data: data,
                         fill: false,
                         borderColor: "rgb(75, 192, 192)",
-                        tension: 0.1,
                     },
                 ],
             },
             options: {
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const index = context.dataIndex;
+                                const stockPrice = this.stockPrices[index];
+                                return [
+                                    `Open: $${stockPrice.open}`,
+                                    `Close: $${stockPrice.close}`,
+                                    `High: $${stockPrice.high}`,
+                                    `Low: $${stockPrice.low}`,
+                                ];
+                            }.bind(this),
+                        },
+                    },
                 },
                 scales: {
                     y: {
                         ticks: {
                             callback: function (value, index, ticks) {
                                 return `$${value}`;
-                            }
-                        }
-                    }
-                }
-            }
+                            },
+                        },
+                    },
+                },
+            },
         });
     }
 }

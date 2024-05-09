@@ -62,7 +62,12 @@
             <div id="market-div">
                 <h1>Markets</h1>
 
-                <form class="d-flex" role="search" id="search-form">
+                <form
+                    class="d-flex"
+                    role="search"
+                    id="search-form"
+                    autocomplete="off"
+                >
                     <input
                         class="form-control me-2"
                         type="search"
@@ -75,6 +80,7 @@
                         Search
                     </button>
                 </form>
+                <div id="results"></div>
 
                 <div id="chart-container">
                     <div id="chart"></div>
