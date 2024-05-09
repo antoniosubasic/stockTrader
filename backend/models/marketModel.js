@@ -23,3 +23,9 @@ export class Market {
             : [marketController.get(this._symbol), [200, 'market data retrieved']];
     }
 }
+
+export class Markets {
+    static getAll() {
+        return marketController.markets.map(({ symbol, name }) => ({ symbol, name }));
+    }
+}
