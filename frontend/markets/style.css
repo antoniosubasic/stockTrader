@@ -1,5 +1,5 @@
 #market-div {
-    margin-top: 5rem;
+    margin-top: 3rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,25 +24,48 @@
     align-items: center;
 }
 
-#results,
+#search {
+    width: 25rem;
+    border: 2px black solid;
+}
+#search:focus {
+    box-shadow: 0 0 5px #2a86f8
+}
+
+#searchBar {
+    margin-top: 2rem;
+    margin-left: 2rem;
+}
+
+#results {
+    width: 25rem;
+}
+
 #results > div {
-    margin-top: 0.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    padding-left: 0 0.5rem;
+    border: 1px solid #dee2e6;
 }
 
 .result-item {
+    padding: 0.5rem; 
+    border-bottom: 1px solid #dee2e6; 
     transition: background-color 0.5s ease;
     margin: 0;
     cursor: pointer;
 }
 
-.result-item:hover {
-    background-color: #eff2f5; 
+.result-item:last-child {
+    border-bottom: none; 
 }
 
-#search {
-    width: 25rem;
+.result-item:hover {
+    background-color: #dee2e6;
+}
+
+#search-form > button {
+    font-weight: 650;
+    border: 2px black solid
+}
+#search-form > button:hover {
+    color: #2a86f8 !important;
 }

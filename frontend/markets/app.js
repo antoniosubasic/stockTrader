@@ -18,7 +18,8 @@ async function init() {
         if (value) {
             const filteredMarkets = markets.filter(
                 (market) =>
-                    market.symbol.toLowerCase().includes(value.toLowerCase()) || market.name.toLowerCase().includes(value.toLowerCase())
+                    market.symbol.toLowerCase().includes(value.toLowerCase()) ||
+                    market.name.toLowerCase().includes(value.toLowerCase())
             );
             filteredMarkets.forEach((market) => {
                 const resultItem = document.createElement("p");
@@ -35,9 +36,9 @@ async function init() {
             });
 
             if (newDiv.children.length > 10) {
-                resultsDiv.innerHTML = `<p>Too many results</p>`;
+                resultsDiv.innerHTML = `<div><p class="result-item">Too many results</p></div>`;
             } else if (newDiv.children.length === 0) {
-                resultsDiv.innerHTML = `<p>No results</p>`;
+                resultsDiv.innerHTML = `<div><p class="result-item">No results</p></div>`;
             } else {
                 resultsDiv.appendChild(newDiv);
             }
@@ -49,7 +50,9 @@ async function init() {
         const enteredValue = searchForm.search.value;
         resultsDiv.innerHTML = "";
         const market = markets.find(
-            (m) => m.name.toLowerCase() === enteredValue.toLowerCase() || m.symbol.toLowerCase() === enteredValue.toLowerCase()
+            (m) =>
+                m.name.toLowerCase() === enteredValue.toLowerCase() ||
+                m.symbol.toLowerCase() === enteredValue.toLowerCase()
         );
         const symbol = market ? market.symbol : "";
         searchForm.search.value = `${market.name}`;
@@ -156,7 +159,7 @@ class Drawer {
                     y: {
                         ticks: {
                             callback: function (value, index, ticks) {
-                                return `$${value}`;
+                                return `$${value.toFixed(2)}`;
                             },
                         },
                     },
