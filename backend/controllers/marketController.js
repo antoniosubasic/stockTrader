@@ -49,7 +49,7 @@ export class Controller {
         const now = UTCTimestamp();
 
         if (!latestFetch || latestFetch < now) {
-            const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${timestampToISO(latestFetch || UTCTimestamp(365))}/${timestampToISO(now)}/?adjusted=true&sort=asc&limit=50000&apiKey=${this._apiKey}`);
+            const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${timestampToISO(latestFetch ? (latestFetch + 24 * 60 * 60 * 1000) : UTCTimestamp(365))}/${timestampToISO(now)}/?adjusted=true&sort=asc&limit=50000&apiKey=${this._apiKey}`);
 
             if (response.ok) {
                 const data = await response.json();
