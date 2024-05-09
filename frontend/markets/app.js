@@ -1,4 +1,4 @@
-import endpoint from '../scripts/config.js';
+import endpoint from "../assets/scripts/config.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch(`${endpoint}/market?symbol=AAPL`);
