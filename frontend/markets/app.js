@@ -143,11 +143,11 @@ class Drawer {
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                const index = context.dataIndex;
+                                const index = this.stockPrices.length - days + context.dataIndex;
                                 const stockPrice = this.stockPrices[index];
                                 return [
-                                    `Open: $${stockPrice.open}`,
                                     `Close: $${stockPrice.close}`,
+                                    `Open: $${stockPrice.open}`,
                                     `High: $${stockPrice.high}`,
                                     `Low: $${stockPrice.low}`,
                                 ];
