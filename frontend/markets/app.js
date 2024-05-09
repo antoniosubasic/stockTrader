@@ -55,7 +55,7 @@ class Drawer {
 
         const labels = this.stockPrices
             .map((stockPrice) =>
-                new Date(stockPrice.timestamp).toLocaleDateString()
+                new Date(stockPrice.timestamp).toLocaleDateString('de-AT', { year: 'numeric', month: '2-digit', day: '2-digit' })
             )
             .slice(-days);
 
@@ -77,6 +77,20 @@ class Drawer {
                     },
                 ],
             },
+            options: {
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function (value, index, ticks) {
+                                return `$${value}`;
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 }
