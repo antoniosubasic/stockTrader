@@ -11,9 +11,9 @@
             integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
             crossorigin="anonymous"
         />
-        <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
         <link rel="stylesheet" href="../assets/styles/navbar.css" />
         <link rel="stylesheet" href="../assets/styles/main.css" />
+        <link rel="stylesheet" href="./style.css" />
         <script type="module" src="../assets/scripts/navbar.js" defer></script>
         <script type="module" src="./app.js" defer></script>
     </head>
@@ -59,7 +59,7 @@
             </div>
         </nav>
         <article>
-            <div id="market-div" style="margin: 5rem 20rem">
+            <div id="market-div">
                 <h1>Markets</h1>
 
                 <form class="d-flex" role="search" id="search-form">
@@ -76,7 +76,9 @@
                     </button>
                 </form>
 
-                <div id="chart"></div>
+                <div id="chart-container">
+                    <div id="chart"></div>
+                </div>
             </div>
         </article>
         <script
@@ -84,5 +86,6 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"
         ></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </body>
 </html>
