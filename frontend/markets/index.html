@@ -59,33 +59,36 @@
             </div>
         </nav>
         <article>
-            <div id="market-div">
-                <h1>Markets</h1>
-
-                <form
-                    class="d-flex"
-                    role="search"
-                    id="search-form"
-                    autocomplete="off"
-                >
-                    <input
-                        class="form-control me-2"
-                        type="search"
-                        placeholder="Search"
-                        aria-label="Search"
-                        id="search"
-                        required
-                    />
-                    <button class="btn btn-outline-success" type="submit">
-                        Search
-                    </button>
-                </form>
-                <div id="results"></div>
-
-                <div id="chart-container">
-                    <div id="chart"></div>
+            <section>
+                <h1 style="text-align: center; margin-top: 1rem;">Markets</h1>
+                <div id="searchBar">
+                    <form
+                        class="d-flex"
+                        role="search"
+                        id="search-form"
+                        autocomplete="off"
+                    >
+                        <input
+                            class="form-control me-2"
+                            type="search"
+                            placeholder="Search"
+                            aria-label="Search"
+                            id="search"
+                            required
+                        />
+                        <button class="btn" type="submit">
+                            Search
+                        </button>
+                    </form>
+                    <div id="results"></div>
                 </div>
-            </div>
+
+                <div id="market-div">
+                    <div id="chart-container">
+                        <div id="chart"></div>
+                    </div>
+                </div>
+            </section>
         </article>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
