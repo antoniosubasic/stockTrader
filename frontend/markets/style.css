@@ -7,13 +7,13 @@
 }
 
 #chart-container {
-    margin-top: 3rem;
+    margin-top: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    height: 50vh;
-    width: 70vw;
+    height: 60vh;
+    width: 80vw;
 }
 
 #chart {
@@ -35,6 +35,9 @@
 #searchBar {
     margin-top: 2rem;
     margin-left: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #results {
