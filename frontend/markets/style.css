@@ -1,9 +1,14 @@
+#heading{
+    text-align: center; 
+    margin: 1rem 0;
+}
+
 #market-div {
     margin-top: 3rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 #chart-container {
@@ -11,6 +16,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     position: relative;
     height: 60vh;
     width: 80vw;
@@ -33,15 +39,16 @@
 }
 
 #searchBar {
-    margin-top: 2rem;
-    margin-left: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #results {
+    position: absolute;
     width: 25rem;
+    z-index: 1;
+    background-color: white;
 }
 
 #results > div {

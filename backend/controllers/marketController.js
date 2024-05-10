@@ -53,8 +53,24 @@ export class Controller {
 
             if (response.ok) {
                 const data = await response.json();
-                const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }) => ({ open, close, high, low, timestamp }));
+                const previousClose = market.stockPrices && market.stockPrices.length > 0 ? market.stockPrices[market.stockPrices.length - 1].close : null;
 
+                const percentChanges = data.results.map(({ c: close }, index, arr) => {
+                    let percentChange;
+                    if (index !== 0) {
+                        percentChange = ((close - arr[index - 1].c) / arr[index - 1].c) * 100;
+                    } else if (previousClose !== null) {
+                        percentChange = ((close - previousClose) / previousClose) * 100;
+                    } else {
+                        percentChange = 0;
+                    }
+                    return percentChange;
+                });
+
+                const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }, index) => {
+                    return { open, close, high, low, timestamp, percentChange: percentChanges[index] };
+                });
+    
                 if (!market.stockPrices) { market.stockPrices = stockPrices; }
                 else { market.stockPrices.push(...stockPrices); }
 
