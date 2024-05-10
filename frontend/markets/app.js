@@ -35,8 +35,14 @@ async function init() {
                 newDiv.appendChild(resultItem);
             });
 
-            if (newDiv.children.length > 10) {
-                resultsDiv.innerHTML = `<div><p class="result-item">Too many results</p></div>`;
+            if (newDiv.children.length > 5) {
+                let div = document.createElement("div");
+
+                for (let i = 0; i < 5; i++) {
+                    div.appendChild(newDiv.children[i]);
+                }
+
+                resultsDiv.appendChild(div);
             } else if (newDiv.children.length === 0) {
                 resultsDiv.innerHTML = `<div><p class="result-item">No results</p></div>`;
             } else {
