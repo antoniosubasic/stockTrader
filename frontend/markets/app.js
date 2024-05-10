@@ -4,6 +4,7 @@ async function init() {
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search");
     const resultsDiv = document.getElementById("results");
+    const stockName = document.getElementById("stock-name");
 
     const response = await fetch(`${endpoint}/markets`);
     let markets;
@@ -27,7 +28,8 @@ async function init() {
                 resultItem.textContent = `${market.name} (${market.symbol})`;
 
                 resultItem.addEventListener("click", () => {
-                    searchForm.search.value = `${market.name}`;
+                    searchForm.search.value =
+                        stockName.innerText = `${market.name}`;
                     resultsDiv.innerHTML = "";
                     performSearch(market.symbol);
                 });
@@ -61,7 +63,7 @@ async function init() {
                 m.symbol.toLowerCase() === enteredValue.toLowerCase()
         );
         const symbol = market ? market.symbol : "";
-        searchForm.search.value = `${market.name}`;
+        searchForm.search.value = stockName.innerText = `${market.name}`;
 
         performSearch(symbol);
     });
@@ -149,13 +151,19 @@ class Drawer {
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                const index = this.stockPrices.length - days + context.dataIndex;
+                                const index =
+                                    this.stockPrices.length -
+                                    days +
+                                    context.dataIndex;
                                 const stockPrice = this.stockPrices[index];
                                 return [
-                                    `Close: $${stockPrice.close}`,
-                                    `Open: $${stockPrice.open}`,
-                                    `High: $${stockPrice.high}`,
-                                    `Low: $${stockPrice.low}`,
+                                    `Close: $${stockPrice.close.toFixed(2)}`,
+                                    `Open: $${stockPrice.open.toFixed(2)}`,
+                                    `High: $${stockPrice.high.toFixed(2)}`,
+                                    `Low: $${stockPrice.low.toFixed(2)}`,
+                                    `Change: ${stockPrice.percentChange.toFixed(
+                                        2
+                                    )}%`,
                                 ];
                             }.bind(this),
                         },
