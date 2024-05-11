@@ -12,7 +12,6 @@
             crossorigin="anonymous"
         />
         <link rel="stylesheet" href="../assets/styles/navbar.css" />
-        <link rel="stylesheet" href="../assets/styles/main.css" />
         <link rel="stylesheet" href="./style.css" />
         <script type="module" src="../assets/scripts/navbar.js" defer></script>
         <script type="module" src="./app.js" defer></script>
@@ -84,16 +83,18 @@
                 </div>
 
                 <div id="market-div">
+                    <div id="chart-box">
+                        <div id="chart-container"></div>
+                    </div>
                     <div id="stock">
-                        <div id="stock-gainer"><p>stock-gainer</p></div>
-                        <div id="stock-losers"><p>stock-losers</p></div>
+                        <div id="stock-gainers">
+                            <h3>Stock Gainers</h3>
+                        </div>
+                        <div id="stock-losers">
+                            <h3>Stock Losers</h3>
+                        </div>
                     </div>
-                    <div id="chart-container">
-                        <h2 id="stock-name"></h2>
-                        <div id="chart"></div>
-                    </div>
-    
-                    <div id="recent-viewed"><p>recent-viewed</p></div>
+                    <div id="recent-viewed"></div>
                 </div>
             </section>
         </article>

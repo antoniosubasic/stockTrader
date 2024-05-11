@@ -4,13 +4,29 @@ async function init() {
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search");
     const resultsDiv = document.getElementById("results");
-    const stockName = document.getElementById("stock-name");
+    const stockGainers = document.getElementById("stock-gainers");
+    const stockLosers = document.getElementById("stock-losers");
 
-    const response = await fetch(`${endpoint}/markets`);
-    let markets;
-    if (response.ok) {
-        markets = await response.json();
-    }
+    const gainers = await fetchMarkets(`${endpoint}/markets/gainers?count=5`);
+    const losers = await fetchMarkets(`${endpoint}/markets/losers?count=5`);
+    const markets = await fetchMarkets(`${endpoint}/markets`);
+
+    const firstRow = `
+    <div class="stock-item stock-item-display">
+        <span class="stock-name stock-item-display">Symbol</span>
+        <span class="stock-price">Price</span>
+        <span class="stock-change">Change</span>
+    </div>`;
+    stockGainers.innerHTML += firstRow;
+    stockLosers.innerHTML += firstRow;
+
+    gainers.forEach((gainer) => {
+        createStockDiv(gainer, stockGainers);
+    });
+
+    losers.forEach((loser) => {
+        createStockDiv(loser, stockLosers);
+    });
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
@@ -21,31 +37,22 @@ async function init() {
                 (market) =>
                     market.symbol.toLowerCase().includes(value.toLowerCase()) ||
                     market.name.toLowerCase().includes(value.toLowerCase())
-            );
+            ).slice(0, 5); // slice the array to only include the first 5 elements
+        
             filteredMarkets.forEach((market) => {
                 const resultItem = document.createElement("p");
                 resultItem.classList.add("result-item");
                 resultItem.textContent = `${market.name} (${market.symbol})`;
-
+        
                 resultItem.addEventListener("click", () => {
-                    searchForm.search.value =
-                        stockName.innerText = `${market.name}`;
+                    searchForm.search.value = `${market.name}`;
                     resultsDiv.innerHTML = "";
                     performSearch(market.symbol);
                 });
-
                 newDiv.appendChild(resultItem);
             });
-
-            if (newDiv.children.length > 5) {
-                let div = document.createElement("div");
-
-                for (let i = 0; i < 5; i++) {
-                    div.appendChild(newDiv.children[i]);
-                }
-
-                resultsDiv.appendChild(div);
-            } else if (newDiv.children.length === 0) {
+        
+            if (newDiv.children.length === 0) {
                 resultsDiv.innerHTML = `<div><p class="result-item">No results</p></div>`;
             } else {
                 resultsDiv.appendChild(newDiv);
@@ -63,7 +70,7 @@ async function init() {
                 m.symbol.toLowerCase() === enteredValue.toLowerCase()
         );
         const symbol = market ? market.symbol : "";
-        searchForm.search.value = stockName.innerText = `${market.name}`;
+        searchForm.search.value = `${market.name}`;
 
         performSearch(symbol);
     });
@@ -71,7 +78,7 @@ async function init() {
 
 async function performSearch(symbol) {
     if (symbol !== "") {
-        const marketDiv = document.getElementById("chart");
+        const marketDiv = document.getElementById("chart-container");
         const drawer = new Drawer(symbol, marketDiv);
 
         if (await drawer.getMarket()) {
@@ -82,6 +89,45 @@ async function performSearch(symbol) {
     } else {
         console.error("market not found");
     }
+}
+
+async function fetchMarkets(fetchUrl) {
+    const response = await fetch(fetchUrl);
+    if (response.ok) {
+        return await response.json();
+    } else {
+        console.error(await response.text());
+        return [];
+    }
+}
+
+function createStockDiv(stock, container) {
+    const stockDiv = document.createElement("div");
+    stockDiv.classList.add("stock-item");
+
+    const stockName = document.createElement("span");
+    stockName.textContent = `${stock.symbol}`;
+    stockName.classList.add("stock-name");
+
+    const stockPrice = document.createElement("span");
+    stockPrice.textContent = `$${stock.currentPrice.toFixed(2)}`;
+    stockPrice.classList.add("stock-price");
+
+    const stockChange = document.createElement("span");
+    stockChange.textContent = `${stock.percentChange.toFixed(2)}%`;
+    stockChange.classList.add(
+        "stock-change",
+        stock.percentChange >= 0 ? "green" : "red"
+    );
+
+    stockDiv.addEventListener("click", () => {
+        performSearch(stock.symbol);
+    });
+
+    stockDiv.appendChild(stockName);
+    stockDiv.appendChild(stockPrice);
+    stockDiv.appendChild(stockChange);
+    container.appendChild(stockDiv);
 }
 
 document.addEventListener("DOMContentLoaded", init);
@@ -113,8 +159,36 @@ class Drawer {
         while (this.marketDiv.firstChild) {
             this.marketDiv.removeChild(this.marketDiv.firstChild);
         }
+
+        const stockName = document.createElement("h2");
+        stockName.textContent = `${this.market.name} (${this.market.symbol})`;
+        stockName.id = "stock-name";
+        this.marketDiv.appendChild(stockName);
+
+        const importantDataDiv = document.createElement("div");
+        importantDataDiv.id = "important-data";
+        const stockPrice = this.stockPrices[this.stockPrices.length - 1];
+        importantDataDiv.innerHTML = `
+        <span id="last-price">${stockPrice.close.toFixed(2)}</span>
+        <span class="${stockPrice.valueChange >= 0 ? "green" : "red"}">${stockPrice.valueChange >= 0 ? "+" : ""}${stockPrice.valueChange.toFixed(2)}</span>
+        <span class="${stockPrice.percentChange >= 0 ? "green" : "red"}">(${stockPrice.percentChange.toFixed(2)}%)</span>
+        `;
+        this.marketDiv.appendChild(importantDataDiv);
+
+        const dataDiv = document.createElement("div");
+        dataDiv.id = "data";
+        dataDiv.innerHTML = `
+        <span><b>Open:</b> $ ${stockPrice.open.toFixed(2)}</span>
+        <span><b>High:</b> $ ${stockPrice.high.toFixed(2)}</span>
+        <span><b>Low:</b> $ ${stockPrice.low.toFixed(2)}</span>
+        `;
+        this.marketDiv.appendChild(dataDiv);
+
+        const chartDiv = document.createElement("div");
+        chartDiv.id = "chart";
         const newCanvas = document.createElement("canvas");
-        this.marketDiv.appendChild(newCanvas);
+        chartDiv.appendChild(newCanvas);
+        this.marketDiv.appendChild(chartDiv);
 
         const ctx = newCanvas.getContext("2d");
 
@@ -157,11 +231,14 @@ class Drawer {
                                     context.dataIndex;
                                 const stockPrice = this.stockPrices[index];
                                 return [
-                                    `Close: $${stockPrice.close.toFixed(2)}`,
-                                    `Open: $${stockPrice.open.toFixed(2)}`,
-                                    `High: $${stockPrice.high.toFixed(2)}`,
-                                    `Low: $${stockPrice.low.toFixed(2)}`,
-                                    `Change: ${stockPrice.percentChange.toFixed(
+                                    `Close: $ ${stockPrice.close.toFixed(2)}`,
+                                    `Open: $ ${stockPrice.open.toFixed(2)}`,
+                                    `High: $ ${stockPrice.high.toFixed(2)}`,
+                                    `Low: $ ${stockPrice.low.toFixed(2)}`,
+                                    `Value Change: $ ${stockPrice.valueChange.toFixed(
+                                        2
+                                    )}`,
+                                    `Percent Change: ${stockPrice.percentChange.toFixed(
                                         2
                                     )}%`,
                                 ];
@@ -180,5 +257,30 @@ class Drawer {
                 },
             },
         });
+
+        const daysDiv = document.createElement("div");
+        daysDiv.id = "days";
+
+        const daysButtons = [
+            { days: 7, label: '1 Week' },
+            { days: 14, label: '2 Weeks' },
+            { days: 30, label: '1 Month' },
+            { days: 90, label: '3 Months' },
+            { days: 180, label: '6 Months' },
+            { days: 365, label: '1 Year' }
+        ];
+        
+        daysButtons.forEach(({ days, label }) => {
+            const button = document.createElement("button");
+            button.classList.add("btn");
+            button.classList.add("days-button");
+            button.textContent = label;
+            button.addEventListener("click", () => {
+                this.drawMarket(days);
+            });
+            daysDiv.appendChild(button);
+        });
+
+        this.marketDiv.appendChild(daysDiv);
     }
 }

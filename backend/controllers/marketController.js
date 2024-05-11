@@ -42,6 +42,24 @@ export class Controller {
         return this._markets.find(market => market.symbol === symbol);
     }
 
+    getTopMarkets(count, isGainer) {
+        const marketsWithPrices = this._markets.filter(market => market.stockPrices && market.stockPrices.length > 0);
+    
+        return marketsWithPrices.sort((a, b) => (isGainer ? -1 : 1) * (a.stockPrices[a.stockPrices.length - 1].percentChange - b.stockPrices[b.stockPrices.length - 1].percentChange))
+            .slice(0, count)
+            .map(market => {
+                const lastDay = market.stockPrices[market.stockPrices.length - 1];
+                const dayBefore = market.stockPrices[market.stockPrices.length - 2];
+                return {
+                    symbol: market.symbol,
+                    name: market.name,
+                    percentChange: lastDay.percentChange,
+                    valueChange: lastDay.close - (dayBefore ? dayBefore.close : 0),
+                    currentPrice: lastDay.close
+                };
+            });
+    }
+
     async fetchStockPrices(symbol) {
         const market = this.get(symbol);
 
@@ -55,20 +73,20 @@ export class Controller {
                 const data = await response.json();
                 const previousClose = market.stockPrices && market.stockPrices.length > 0 ? market.stockPrices[market.stockPrices.length - 1].close : null;
 
-                const percentChanges = data.results.map(({ c: close }, index, arr) => {
-                    let percentChange;
-                    if (index !== 0) {
-                        percentChange = ((close - arr[index - 1].c) / arr[index - 1].c) * 100;
-                    } else if (previousClose !== null) {
-                        percentChange = ((close - previousClose) / previousClose) * 100;
-                    } else {
-                        percentChange = 0;
+                const changes = data.results.map(({ c: close }, index, arr) => {
+                    let previousPrice = index !== 0 ? arr[index - 1].c : previousClose;
+                    if (previousPrice === null) {
+                        return { percentChange: 0, valueChange: 0 };
                     }
-                    return percentChange;
+                
+                    let valueChange = close - previousPrice;
+                    let percentChange = (valueChange / previousPrice) * 100;
+                
+                    return { percentChange, valueChange };
                 });
-
+                
                 const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }, index) => {
-                    return { open, close, high, low, timestamp, percentChange: percentChanges[index] };
+                    return { open, close, high, low, timestamp, ...changes[index] };
                 });
     
                 if (!market.stockPrices) { market.stockPrices = stockPrices; }
