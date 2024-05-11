@@ -4,7 +4,7 @@
 }
 
 #market-div {
-    margin-top: 3rem;
+    margin-top: 5rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,8 +17,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    position: relative;
-    height: 60vh;
+    height: 50vh;
     width: 80vw;
 }
 
@@ -78,4 +77,84 @@
 }
 #search-form > button:hover {
     color: #2a86f8 !important;
+}
+
+.stock-item {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.5s ease;
+    cursor: pointer;
+}
+
+.stock-item:hover {
+    background-color: #dee2e6;
+}
+
+.stock-name{
+    margin-right: 2rem;
+    font-weight: 600;
+}
+
+.stock-item-display {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.stock-price {
+    margin: 0 1rem;
+}
+
+.stock-change {
+    margin-left: 4rem;
+}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
+#stock-gainers,
+#stock-losers {
+    margin-top: 2rem;
+}
+
+#stock {
+    margin-right: 2rem;
+}
+
+#last-price {
+    font-size: 2rem !important;
+    font-weight: 600;
+}
+
+#important-data,
+#data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+#important-data > span {
+    font-size: 1.1rem;
+}
+
+#days {
+    margin-top: 2rem;
+}
+
+.days-button {
+    margin: 0 0.125rem;
+    border: 2px black solid;
+    font-size: 1.1rem;
+}
+
+.days-button:hover {
+    color: #2a86f8 !important;
+    border: 2px black solid;
 }

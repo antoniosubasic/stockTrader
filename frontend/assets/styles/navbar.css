@@ -3,16 +3,14 @@
     font-weight: 600;
 }
 
-.nav-link:hover {
-    color: #2a86f8 !important;
-}
-
 .signInUp {
     font-weight: 650;
     padding: 0.15rem 1.3rem;
 }
 
-.signInUp:hover {
+.signInUp:hover,
+.settings:hover,
+.nav-link:hover {
     color: #2a86f8 !important;
 }
 
@@ -21,12 +19,7 @@
     background-color: #eff2f5;
 }
 
-.settings:hover {
-    color: #2a86f8 !important;
-}
-
 .navbar-brand {
     height: 3.5rem;
     margin-right: 3rem;
 }
-
