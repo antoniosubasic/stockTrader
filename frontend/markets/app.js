@@ -37,7 +37,7 @@ async function init() {
                 (market) =>
                     market.symbol.toLowerCase().includes(value.toLowerCase()) ||
                     market.name.toLowerCase().includes(value.toLowerCase())
-            ).slice(0, 5); // slice the array to only include the first 5 elements
+            ).slice(0, 5);
         
             filteredMarkets.forEach((market) => {
                 const resultItem = document.createElement("p");

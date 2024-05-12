@@ -71,32 +71,39 @@ export class Controller {
 
             if (response.ok) {
                 const data = await response.json();
+            
+                if (!data.results) {
+                    market.latestFetch = now;
+                    this.save();
+                    return [304, 'stock prices up to date'];
+                }
+            
                 const previousClose = market.stockPrices && market.stockPrices.length > 0 ? market.stockPrices[market.stockPrices.length - 1].close : null;
-
+            
                 const changes = data.results.map(({ c: close }, index, arr) => {
                     let previousPrice = index !== 0 ? arr[index - 1].c : previousClose;
                     if (previousPrice === null) {
                         return { percentChange: 0, valueChange: 0 };
                     }
-                
+            
                     let valueChange = close - previousPrice;
                     let percentChange = (valueChange / previousPrice) * 100;
-                
+            
                     return { percentChange, valueChange };
                 });
-                
+            
                 const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }, index) => {
                     return { open, close, high, low, timestamp, ...changes[index] };
                 });
-    
+            
                 if (!market.stockPrices) { market.stockPrices = stockPrices; }
                 else { market.stockPrices.push(...stockPrices); }
-
+            
                 market.latestFetch = now;
                 this.save();
-
+            
                 return [200, 'stock prices fetched'];
-            } else { return [response.status, response.statusText]; }
+            }else { return [response.status, response.statusText]; }
         } else { return [304, 'stock prices up to date']; }
     }
 
