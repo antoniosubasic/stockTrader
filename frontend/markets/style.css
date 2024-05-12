@@ -1,23 +1,35 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
 #heading{
     text-align: center; 
     margin: 1rem 0;
 }
 
 #market-div {
-    margin-top: 5rem;
+    margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
 }
 
-#chart-container {
-    margin-top: 2rem;
+#chart-box {
+    margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    height: 50vh;
+}
+
+#chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 55vh;
     width: 80vw;
 }
 
@@ -33,6 +45,7 @@
     width: 25rem;
     border: 2px black solid;
 }
+
 #search:focus {
     box-shadow: 0 0 5px #2a86f8
 }
@@ -75,13 +88,14 @@
     font-weight: 650;
     border: 2px black solid
 }
+
 #search-form > button:hover {
     color: #2a86f8 !important;
 }
 
 .stock-item {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     border-bottom: 1px solid #dee2e6;
     transition: background-color 0.5s ease;
     cursor: pointer;
@@ -91,22 +105,21 @@
     background-color: #dee2e6;
 }
 
+.stock-item-display {
+    font-weight: bold !important;
+}
+
 .stock-name{
-    margin-right: 2rem;
+    margin-right: 1rem;
     font-weight: 600;
 }
 
-.stock-item-display {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.stock-price {
+.stock-price, .stock-change-value {
     margin: 0 1rem;
 }
 
-.stock-change {
-    margin-left: 4rem;
+.stock-change-percent {
+    margin-left: 1rem;
 }
 
 .green {
@@ -128,7 +141,6 @@
 
 #last-price {
     font-size: 2rem !important;
-    font-weight: 600;
 }
 
 #important-data,
@@ -142,6 +154,7 @@
 
 #important-data > span {
     font-size: 1.1rem;
+    font-weight: 600;
 }
 
 #days {
@@ -157,4 +170,25 @@
 .days-button:hover {
     color: #2a86f8 !important;
     border: 2px black solid;
+}
+
+#custom-days { /* Custom days input */
+    border: 2px black solid;
+    border-radius: 0.5rem;
+    padding: 0.4rem;
+    width: 10rem;
+}
+
+#custom-days-button {
+    border: 2px black solid;
+    font-size: 1.1rem;
+}
+
+#custom-days-button:hover {
+    color: #2a86f8 !important;
+    border: 2px black solid;
+}
+
+#custom-days-div {
+    margin: 1rem 0;
 }
