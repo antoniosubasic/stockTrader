@@ -49,12 +49,11 @@ export class Controller {
             .slice(0, count)
             .map(market => {
                 const lastDay = market.stockPrices[market.stockPrices.length - 1];
-                const dayBefore = market.stockPrices[market.stockPrices.length - 2];
                 return {
                     symbol: market.symbol,
                     name: market.name,
                     percentChange: lastDay.percentChange,
-                    valueChange: lastDay.close - (dayBefore ? dayBefore.close : 0),
+                    valueChange: lastDay.valueChange,
                     currentPrice: lastDay.close
                 };
             });
