@@ -119,9 +119,9 @@ export class Drawer {
         <span class="${stockPrice.valueChange >= 0 ? "green" : "red"}">${
             stockPrice.valueChange >= 0 ? "+" : ""
         }${stockPrice.valueChange.toFixed(2)}</span>
-        <span class="${
-            stockPrice.percentChange >= 0 ? "green" : "red"
-        }">(${stockPrice.percentChange.toFixed(2)}%)</span>
+        <span class="${stockPrice.percentChange >= 0 ? "green" : "red"}">(${
+            stockPrice.valueChange >= 0 ? "+" : ""
+        }${stockPrice.percentChange.toFixed(2)}%)</span>
         `;
         this.marketDiv.appendChild(importantDataDiv);
 
@@ -168,9 +168,9 @@ export class Drawer {
         });
 
         const customDayDiv = document.createElement("div");
-        customDayDiv.id = "custom-days-div";	
+        customDayDiv.id = "custom-days-div";
         const form = document.createElement("form");
-        form.autocomplete="off";
+        form.autocomplete = "off";
         form.classList.add("d-flex");
         form.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -179,14 +179,14 @@ export class Drawer {
                 this.drawMarket(days);
             }
         });
-        
+
         const input = document.createElement("input");
         input.classList.add("form-control", "me-2");
         input.type = "number";
         input.id = "custom-days";
         input.placeholder = "Enter days:";
         form.appendChild(input);
-        
+
         const inputButton = document.createElement("button");
         inputButton.type = "submit";
         inputButton.textContent = "Go";

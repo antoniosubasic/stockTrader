@@ -158,13 +158,14 @@ html, body {
 }
 
 #days {
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
 
 .days-button {
     margin: 0 0.125rem;
     border: 2px black solid;
     font-size: 1.1rem;
+    padding: 0.2rem;
 }
 
 .days-button:hover {
@@ -175,13 +176,14 @@ html, body {
 #custom-days { /* Custom days input */
     border: 2px black solid;
     border-radius: 0.5rem;
-    padding: 0.4rem;
+    padding: 0.2rem;
     width: 10rem;
 }
 
 #custom-days-button {
     border: 2px black solid;
     font-size: 1.1rem;
+    padding: 0.2rem 0.4rem;
 }
 
 #custom-days-button:hover {
@@ -190,5 +192,6 @@ html, body {
 }
 
 #custom-days-div {
-    margin: 1rem 0;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
 }
