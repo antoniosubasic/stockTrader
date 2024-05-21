@@ -1,7 +1,8 @@
+import dotenv from 'dotenv';
 import fs from 'fs';
 
+dotenv.config();
 const marketsFile = './data/markets.json';
-const apiKeyFile = './data/apikey';
 const stockPricesFolder = './data/stockPrices';
 
 const timestampToISO = timestamp => new Date(timestamp).toISOString().split('T')[0];
@@ -13,10 +14,8 @@ const UTCTimestamp = (daysAgo = null) => {
 
 export class Controller {
     _markets = null;
-    _apiKey = null;
 
     constructor() {
-        this._apiKey = fs.readFileSync(apiKeyFile);
         this._markets = JSON.parse(fs.readFileSync(marketsFile));
 
         this._markets.forEach(market => {
@@ -44,7 +43,7 @@ export class Controller {
 
     getTopMarkets(count, isGainer) {
         const marketsWithPrices = this._markets.filter(market => market.stockPrices && market.stockPrices.length > 0);
-    
+
         return marketsWithPrices.sort((a, b) => (isGainer ? -1 : 1) * (a.stockPrices[a.stockPrices.length - 1].percentChange - b.stockPrices[b.stockPrices.length - 1].percentChange))
             .slice(0, count)
             .map(market => {
@@ -66,43 +65,43 @@ export class Controller {
         const now = UTCTimestamp();
 
         if (!latestFetch || latestFetch < now) {
-            const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${timestampToISO(latestFetch ? (latestFetch + 24 * 60 * 60 * 1000) : UTCTimestamp(365))}/${timestampToISO(now)}/?adjusted=true&sort=asc&limit=50000&apiKey=${this._apiKey}`);
+            const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${timestampToISO(latestFetch ? (latestFetch + 24 * 60 * 60 * 1000) : UTCTimestamp(365))}/${timestampToISO(now)}/?adjusted=true&sort=asc&limit=50000&apiKey=${process.env.POLYGON_API_KEY}`);
 
             if (response.ok) {
                 const data = await response.json();
-            
+
                 if (!data.results) {
                     market.latestFetch = now;
                     this.save();
                     return [304, 'stock prices up to date'];
                 }
-            
+
                 const previousClose = market.stockPrices && market.stockPrices.length > 0 ? market.stockPrices[market.stockPrices.length - 1].close : null;
-            
+
                 const changes = data.results.map(({ c: close }, index, arr) => {
                     let previousPrice = index !== 0 ? arr[index - 1].c : previousClose;
                     if (previousPrice === null) {
                         return { percentChange: 0, valueChange: 0 };
                     }
-            
+
                     let valueChange = close - previousPrice;
                     let percentChange = (valueChange / previousPrice) * 100;
-            
+
                     return { percentChange, valueChange };
                 });
-            
+
                 const stockPrices = data.results.map(({ o: open, c: close, h: high, l: low, t: timestamp }, index) => {
                     return { open, close, high, low, timestamp, ...changes[index] };
                 });
-            
+
                 if (!market.stockPrices) { market.stockPrices = stockPrices; }
                 else { market.stockPrices.push(...stockPrices); }
-            
+
                 market.latestFetch = now;
                 this.save();
-            
+
                 return [200, 'stock prices fetched'];
-            }else { return [response.status, response.statusText]; }
+            } else { return [response.status, response.statusText]; }
         } else { return [304, 'stock prices up to date']; }
     }
 

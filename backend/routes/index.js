@@ -1,10 +1,12 @@
+import dotenv from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { User } from "../models/userModel.js";
 import { Market, Markets } from "../models/marketModel.js";
 
-const port = 8000;
+dotenv.config();
+const port = process.env.PORT || 8000;
 const app = express();
 
 app.use(bodyParser.json());
