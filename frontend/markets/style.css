@@ -163,32 +163,31 @@ html, body {
 
 .days-button {
     margin: 0 0.125rem;
-    border: 2px black solid;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     padding: 0.2rem;
 }
 
 .days-button:hover {
     color: #2a86f8 !important;
-    border: 2px black solid;
 }
 
 #custom-days { /* Custom days input */
-    border: 2px black solid;
+    border: 1.5px black solid;
     border-radius: 0.5rem;
     padding: 0.2rem;
     width: 10rem;
 }
 
 #custom-days-button {
-    border: 2px black solid;
+    border: 1.5px black solid;
     font-size: 1.1rem;
     padding: 0.2rem 0.4rem;
+    font-weight: 600;
 }
 
 #custom-days-button:hover {
     color: #2a86f8 !important;
-    border: 2px black solid;
+    border: 1.5px black solid;
 }
 
 #custom-days-div {
