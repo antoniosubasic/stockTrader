@@ -148,12 +148,12 @@ export class Drawer {
         daysDiv.id = "days";
 
         const daysButtons = [
-            { days: 7, label: "1 Week" },
-            { days: 14, label: "2 Weeks" },
-            { days: 30, label: "1 Month" },
-            { days: 90, label: "3 Months" },
-            { days: 180, label: "6 Months" },
-            { days: 365, label: "1 Year" },
+            { days: 7, label: "1W" },
+            { days: 14, label: "2W" },
+            { days: 30, label: "1M" },
+            { days: 90, label: "3M" },
+            { days: 180, label: "6M" },
+            { days: 365, label: "1Y" },
         ];
 
         daysButtons.forEach(({ days, label }) => {
