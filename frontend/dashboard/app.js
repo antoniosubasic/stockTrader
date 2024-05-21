@@ -1,7 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const user = JSON.parse(localStorage.getItem("user"));
+import auth from "../assets/scripts/auth.js";
 
-    if (!user) {
+document.addEventListener("DOMContentLoaded", async () => {
+    if (!await auth()) {
         window.location.href = "../signIn";
     }
 });

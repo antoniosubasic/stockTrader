@@ -18,7 +18,7 @@ export class User {
     }
 
     static signIn(username, password) {
-        const user = userController.get(username);
+        const user = userController.getByName(username);
 
         if (!user) {
             return [null, [404, 'user not found']];
@@ -30,7 +30,7 @@ export class User {
     }
 
     static signUp(username, password) {
-        if (userController.get(username)) {
+        if (userController.getByName(username)) {
             return [400, 'user already exists'];
         }
 
@@ -39,7 +39,7 @@ export class User {
     }
 
     static delete(name, password) {
-        const user = userController.get(name);
+        const user = userController.getByName(name);
 
         if (!user) {
             return [404, 'user not found'];
@@ -49,6 +49,19 @@ export class User {
             userController.delete(name);
             return [200, 'user deleted'];
         }
+    }
+
+    static exists(id, name) {
+        const user = userController.getById(id);
+        return user && user.name === name ? true : false;
+    }
+
+    getData() {
+        return {
+            id: this._id,
+            name: this._name,
+            balance: this._balance
+        };
     }
 
     get name() {
