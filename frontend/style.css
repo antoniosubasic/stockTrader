@@ -1,10 +1,11 @@
+main {
+    width: 100svh;
+}
+
 .container {
     display: flex;
     float: left;
     justify-content: left;
-    height: 100vh;
-    margin-left: -50rem;
-    width: 40rem;
 }
 
 .content {
