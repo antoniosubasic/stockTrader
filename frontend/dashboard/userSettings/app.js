@@ -1,13 +1,14 @@
-function init() {
-    const user = JSON.parse(localStorage.getItem("user"));
+import auth from "../../assets/scripts/auth.js";
 
-    if (!user) {
+async function init() {
+    if (!await auth()) {
         window.location.href = "../../signIn";
     }
 
     const logOut = document.getElementById("logOut");
     logOut.addEventListener("click", () => {
         localStorage.removeItem("user");
+        localStorage.removeItem("jwt");
         window.location.reload();
     });
 

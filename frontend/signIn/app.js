@@ -20,20 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (response.ok) {
-            const currentUser = localStorage.getItem("user");
-            const newUser = JSON.stringify(await response.json());
-
-            if (currentUser === newUser) {
+            if (localStorage.getItem("jwt")) {
                 errorMessage.innerHTML = "<p>User already signed in</p>";
-            } else if (currentUser) {
-                errorMessage.innerHTML =
-                    "<p>Another user is already signed in</p>";
             } else {
+                const { user, token: jwt } = await response.json();
+                localStorage.setItem("jwt", jwt);
+                localStorage.setItem("user", JSON.stringify(user));
                 window.location.href = "../dashboard";
-                localStorage.setItem(
-                    "user",
-                    newUser
-                );
             }
         } else {
             errorMessage.innerHTML = `<p>${await response.text()}</p>`;

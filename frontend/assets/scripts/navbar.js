@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let path = `.${["markets", "dashboard"].some((str) => location.includes(str)) ? "." : ""}`;
 
     if (user) {
-        const username = JSON.parse(user)._name;
+        const username = JSON.parse(user).name;
 
         signInUpDiv.innerHTML = `
         <div class="dropdown">
@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("logOut").addEventListener("click", () => {
             localStorage.removeItem("user");
+            localStorage.removeItem("jwt");
             window.location.reload();
         });
 
