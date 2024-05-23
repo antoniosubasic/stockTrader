@@ -17,7 +17,6 @@ html, body {
 }
 
 #chart-box {
-    margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -29,8 +28,8 @@ html, body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    height: 55vh;
-    width: 80vw;
+    height: 70vh;
+    width: 75vw;
 }
 
 #chart {
@@ -99,27 +98,27 @@ html, body {
     border-bottom: 1px solid #dee2e6;
     transition: background-color 0.5s ease;
     cursor: pointer;
+    gap: 1.5rem;
 }
 
 .stock-item:hover {
     background-color: #dee2e6;
 }
 
-.stock-item-display {
-    font-weight: bold !important;
+.stock-item span {
+    font-size: 0.9rem;
+}
+.stock-item-display span {
+    font-weight: 650;
+    font-size: 0.8rem;
+}
+
+.stock-item span:not(:first-child) {
+    text-align: right;
 }
 
 .stock-name{
-    margin-right: 1rem;
-    font-weight: 600;
-}
-
-.stock-price, .stock-change-value {
-    margin: 0 1rem;
-}
-
-.stock-change-percent {
-    margin-left: 1rem;
+    font-weight: 500;
 }
 
 .green {
@@ -130,13 +129,12 @@ html, body {
     color: red;
 }
 
-#stock-gainers,
 #stock-losers {
     margin-top: 2rem;
 }
 
 #stock {
-    margin-right: 2rem;
+    margin-right: 1rem;
 }
 
 #last-price {

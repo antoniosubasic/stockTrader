@@ -10,6 +10,8 @@ async function init() {
 
     await updateStocks(endpoint);
 
+    createToggleButton();
+
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
         filterAndDisplayMarkets(value, resultsDiv, searchForm, markets);
@@ -29,6 +31,27 @@ async function init() {
 
         performSearch(symbol);
     });
+}
+
+function createToggleButton() {
+    const toggleButton = document.createElement("button");
+    toggleButton.className = "btn toggle-button";
+    toggleButton.textContent = "<";
+    toggleButton.addEventListener("click", () => {
+        const stockDiv = document.getElementById("stock");
+        if (stockDiv.style.display === "none") {
+            stockDiv.style.display = "block";
+            toggleButton.textContent = ">";
+        } else {
+            stockDiv.style.display = "none";
+            toggleButton.textContent = "<";
+        }
+    });
+
+    const parentDiv = document.getElementById("stock").parentNode;
+    const stockDiv = document.getElementById("stock");
+
+    parentDiv.insertBefore(toggleButton, stockDiv);
 }
 
 async function performSearch(symbol) {
@@ -60,12 +83,12 @@ async function updateStocks(endpoint) {
     const stockGainers = document.getElementById("stock-gainers");
     const stockLosers = document.getElementById("stock-losers");
 
-    stockGainers.innerHTML = "<h3>Stock Gainers</h3>";
-    stockLosers.innerHTML = "<h3>Stock Losers</h3>";
+    stockGainers.innerHTML = "<h4>Stock Gainers</h4>";
+    stockLosers.innerHTML = "<h4>Stock Losers</h4>";
 
     const firstRow = `
     <div class="stock-item stock-item-display">
-        <span class="stock-name stock-item-display">Symbol</span>
+        <span class="stock-name">Symbol</span>
         <span class="stock-price">Price</span>
         <span class="stock-change-value">Change</span>
         <span class="stock-change-percent">%Change</span>
