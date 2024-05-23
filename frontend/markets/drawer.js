@@ -18,13 +18,33 @@ export class Drawer {
             this.market = await response.json();
             this.stockPrices = this.market.stockPrices;
             return true;
+        } else if (response.status === 429) { // API data limit reached (too many requests)
+            
+            const errorDiv = `
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Too many requests!</h4>
+                <p>
+                    Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. <br>
+                    Please try again in a few minutes.
+                </p>
+            </div>
+            `;
+            this.canvasDiv.innerHTML = errorDiv;
+
+            return false;
         } else {
             console.error(await response.text());
             return false;
         }
     }
 
-    drawMarket(inputDays) {
+    async drawMarket(inputDays) {
+        if (!this.market) {
+            if (!(await this.getMarket())) {
+                return;
+            }
+        }
+
         this.rearrangeDiv();
     
         let days = Math.min(this.stockPrices.length, inputDays);
@@ -53,7 +73,6 @@ export class Drawer {
                     {
                         label: this.market.name,
                         data: data,
-                        fill: false,
                         borderColor: "rgb(75, 192, 192)",
                     },
                 ],

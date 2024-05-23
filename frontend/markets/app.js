@@ -57,13 +57,7 @@ function createToggleButton() {
 async function performSearch(symbol) {
     if (symbol !== "") {
         const drawer = new Drawer(symbol);
-
-        if (await drawer.getMarket()) {
-            await updateStocks(endpoint);
-            drawer.drawMarket(30);
-        } else {
-            console.error("failed to get market data");
-        }
+        drawer.drawMarket(30);
     } else {
         console.error("market not found");
     }
