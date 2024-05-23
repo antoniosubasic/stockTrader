@@ -24,9 +24,11 @@ export class Drawer {
         }
     }
 
-    drawMarket(days) {
+    drawMarket(inputDays) {
         this.rearrangeDiv();
-
+    
+        let days = Math.min(this.stockPrices.length, inputDays);
+    
         const ctx = document.getElementById("chart-canvas").getContext("2d");
 
         const labels = this.stockPrices
