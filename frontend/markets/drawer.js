@@ -38,11 +38,15 @@ export class Drawer {
         }
     }
 
-    async drawMarket(inputDays) {
+    async drawMarket(inputDays = null) {
         if (!this.market) {
             if (!(await this.getMarket())) {
                 return;
             }
+        }
+
+        if (inputDays === null) {
+            inputDays = this.stockPrices.length / 12;
         }
 
         this.rearrangeDiv();
@@ -169,12 +173,12 @@ export class Drawer {
         daysDiv.id = "days";
 
         const daysButtons = [
-            { days: 7, label: "1W" },
-            { days: 14, label: "2W" },
-            { days: 30, label: "1M" },
-            { days: 90, label: "3M" },
-            { days: 180, label: "6M" },
-            { days: 365, label: "1Y" },
+            { days: this.stockPrices.length / 52, label: "1W" },
+            { days: this.stockPrices.length / 26, label: "2W" },
+            { days: this.stockPrices.length / 12, label: "1M" },
+            { days: this.stockPrices.length / 4, label: "3M" },
+            { days: this.stockPrices.length / 2, label: "6M" },
+            { days: this.stockPrices.length, label: "1Y" },
         ];
 
         daysButtons.forEach(({ days, label }) => {

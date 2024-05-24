@@ -5,12 +5,11 @@ async function init() {
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search");
     const resultsDiv = document.getElementById("results");
+    const toggleButton = document.getElementById("toggle-btn");
 
     const markets = await fetchMarkets(`${endpoint}/markets`);
 
-    await updateStocks(endpoint);
-
-    createToggleButton();
+    await updateStocks();
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
@@ -31,35 +30,39 @@ async function init() {
 
         performSearch(symbol);
     });
-}
 
-function createToggleButton() {
-    const toggleButton = document.createElement("button");
-    toggleButton.className = "btn toggle-button";
-    toggleButton.textContent = "<";
     toggleButton.addEventListener("click", () => {
-        const stockDiv = document.getElementById("stock");
-        if (stockDiv.style.display === "none") {
-            stockDiv.style.display = "block";
-            toggleButton.textContent = ">";
-        } else {
-            stockDiv.style.display = "none";
-            toggleButton.textContent = "<";
-        }
+        handleToggleButton();
     });
-
-    const parentDiv = document.getElementById("stock").parentNode;
-    const stockDiv = document.getElementById("stock");
-
-    parentDiv.insertBefore(toggleButton, stockDiv);
 }
 
 async function performSearch(symbol) {
     if (symbol !== "") {
         const drawer = new Drawer(symbol);
-        drawer.drawMarket(30);
+        drawer.drawMarket();
+
+        await updateStocks();
     } else {
         console.error("market not found");
+    }
+}
+
+function handleToggleButton() {
+    const bar = $("#stock-div");
+    const toggleButton = $("#toggle-btn");
+    const chartContainer = $("#chart-container");
+
+    if (bar.width() > 0) {
+        bar.animate({ width: '0' }, 500, function() {
+            bar.hide();
+            toggleButton.text(">");
+        });
+        chartContainer.animate({ height: '85vh', width: '90vw' }, 500);
+    } else {
+        bar.css('width', '0').show().animate({ width: '100%' }, 500, function() {
+            toggleButton.text("<");
+        });
+        chartContainer.animate({ height: '70vh', width: '75vw' }, 500);
     }
 }
 
@@ -73,7 +76,7 @@ async function fetchMarkets(fetchUrl) {
     }
 }
 
-async function updateStocks(endpoint) {
+async function updateStocks() {
     const stockGainers = document.getElementById("stock-gainers");
     const stockLosers = document.getElementById("stock-losers");
 
