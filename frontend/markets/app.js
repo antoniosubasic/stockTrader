@@ -11,6 +11,8 @@ async function init() {
 
     await updateStocks();
 
+    performSearch("NVDA");
+
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
         filterAndDisplayMarkets(value, resultsDiv, searchForm, markets);
@@ -57,7 +59,7 @@ function handleToggleButton() {
             bar.hide();
             toggleButton.text(">");
         });
-        chartContainer.animate({ height: '85vh', width: '90vw' }, 500);
+        chartContainer.animate({ height: '80vh', width: '85vw' }, 500);
     } else {
         bar.css('width', '0').show().animate({ width: '100%' }, 500, function() {
             toggleButton.text("<");
