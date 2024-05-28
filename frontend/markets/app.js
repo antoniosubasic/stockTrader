@@ -41,7 +41,7 @@ async function init() {
 async function performSearch(symbol) {
     if (symbol !== "") {
         const drawer = new Drawer(symbol);
-        drawer.drawMarket();
+        await drawer.drawMarket();
 
         await updateStocks();
     } else {
