@@ -55,13 +55,16 @@
     text-align: center;
 }
 
-#search {
-    width: 25rem;
-    border: 2px black solid;
+#buy-form-container {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#search:focus {
-    box-shadow: 0 0 5px #2a86f8;
+#search,
+#buy-form {
+    width: 25rem;
 }
 
 #searchBar {
@@ -96,13 +99,4 @@
 
 .result-item:hover {
     background-color: #dee2e6;
-}
-
-#search-form > button {
-    font-weight: 650;
-    border: 2px black solid;
-}
-
-#search-form > button:hover {
-    color: #2a86f8 !important;
 }

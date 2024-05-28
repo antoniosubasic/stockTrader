@@ -1,10 +1,11 @@
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
 }
 
-#heading{
-    text-align: center; 
+#heading {
+    text-align: center;
     margin: 0.75rem 0;
 }
 
@@ -42,11 +43,6 @@ html, body {
 
 #search {
     width: 25rem;
-    border: 2px black solid;
-}
-
-#search:focus {
-    box-shadow: 0 0 5px #2a86f8
 }
 
 #searchBar {
@@ -68,31 +64,23 @@ html, body {
 }
 
 .result-item {
-    padding: 0.5rem; 
-    border-bottom: 1px solid #dee2e6; 
+    padding: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
     transition: background-color 0.5s ease;
     margin: 0;
     cursor: pointer;
 }
 
 .result-item:last-child {
-    border-bottom: none; 
+    border-bottom: none;
 }
 
 .result-item:hover {
     background-color: #dee2e6;
 }
 
-#search-form > button {
-    font-weight: 650;
-    border: 2px black solid
-}
-
-#search-form > button:hover {
-    color: #2a86f8 !important;
-}
-
 .stock-item {
+    padding: 0.25rem 0.5rem;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     border-bottom: 1px solid #dee2e6;
@@ -117,7 +105,7 @@ html, body {
     text-align: right;
 }
 
-.stock-name{
+.stock-name {
     font-weight: 500;
 }
 
@@ -173,23 +161,15 @@ html, body {
     color: #2a86f8 !important;
 }
 
-#custom-days { /* Custom days input */
-    border: 1.5px black solid;
+#custom-days {
     border-radius: 0.5rem;
-    padding: 0.2rem;
+    padding: 0.5rem 0.75rem;
     width: 10rem;
 }
 
 #custom-days-button {
-    border: 1.5px black solid;
     font-size: 1.1rem;
-    padding: 0.2rem 0.4rem;
-    font-weight: 600;
-}
-
-#custom-days-button:hover {
-    color: #2a86f8 !important;
-    border: 1.5px black solid;
+    padding: 0.2rem 0.75rem;
 }
 
 #custom-days-div {
