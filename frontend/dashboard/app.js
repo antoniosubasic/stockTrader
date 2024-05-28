@@ -14,74 +14,84 @@ function formatTimestamp(timestamp) {
 
 function initTabSelectionHandler() {
     const buttons = document.querySelectorAll("#tab-selection button");
-    const tabContent = document.getElementById("tab");
-    const user = JSON.parse(localStorage.getItem("user"));
+    let params = new URLSearchParams(window.location.search);
 
     buttons.forEach(button => {
         button.addEventListener("click", async () => {
             buttons.forEach(b => b.classList.remove("active"));
             button.classList.add("active");
+            const display = button.getAttribute("data-display");
 
-            switch (button.getAttribute("data-display")) {
-                case "stocks":
-                    tabContent.innerHTML = `
-                        <ul>
-                            ${user.stocks.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
-                        </ul>
-                    `;
-                    break;
+            params.set("display", display);
+            window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
 
-                case "transactions":
-                    tabContent.innerHTML = `
-                        <div></div>
-                    `;
-                    break;
-
-                case "buy-stocks":
-                    tabContent.innerHTML = `
-                        <h1>BUY STOCKS</h1>
-                        <div id="searchBar">
-                            <div>
-                                <form
-                                    class="d-flex"
-                                    role="search"
-                                    id="search-form"
-                                    autocomplete="off"
-                                >
-                                    <input
-                                        class="form-control me-2"
-                                        type="search"
-                                        placeholder="Search..."
-                                        aria-label="Search"
-                                        id="search"
-                                        required
-                                    />
-                                    <button class="btn btn-primary" type="submit">Search</button>
-                                </form>
-                                <div id="results"></div>
-                            </div>
-                        </div>
-                        <div id="buy-form-container">
-                            <form class="d-flex" id="buy-form">
-                                <input
-                                    class="form-control me-2"
-                                    type="number"
-                                    placeholder="Quantity"
-                                    aria-label="Quantity"
-                                    id="quantity"
-                                    required
-                                />
-                                <button class="btn btn-primary" type="submit">Buy</button>
-                            </form>
-                        </div>
-                    `;
-                    await initSearchBarHandler();
-                    initBuyFormHandler();
-                    break;
-            }
+            await loadContent(display);
         });
     });
 };
+
+async function loadContent(display) {
+    const tabContent = document.getElementById("tab");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    switch (display) {
+        case "stocks":
+            tabContent.innerHTML = `
+                <ul>
+                    ${user.stocks.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
+                </ul>
+            `;
+            break;
+
+        case "transactions":
+            tabContent.innerHTML = `
+                <div></div>
+            `;
+            break;
+
+        case "buy-stocks":
+            tabContent.innerHTML = `
+                <h1>BUY STOCKS</h1>
+                <div id="searchBar">
+                    <div>
+                        <form
+                            class="d-flex"
+                            role="search"
+                            id="search-form"
+                            autocomplete="off"
+                        >
+                            <input
+                                class="form-control me-2"
+                                type="search"
+                                placeholder="Search..."
+                                aria-label="Search"
+                                id="search"
+                                required
+                            />
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </form>
+                        <div id="results"></div>
+                    </div>
+                </div>
+                <div id="buy-form-container">
+                    <form class="d-flex" id="buy-form">
+                        <input
+                            class="form-control me-2"
+                            type="number"
+                            placeholder="Quantity"
+                            aria-label="Quantity"
+                            id="quantity"
+                            required
+                        />
+                        <button class="btn btn-primary" type="submit">Buy</button>
+                    </form>
+                </div>
+            `;
+            await initSearchBarHandler();
+            initBuyFormHandler();
+            break;
+    }
+}
 
 async function initSearchBarHandler() {
     const searchForm = document.getElementById("search-form");
@@ -191,6 +201,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("share-in-stocks-value").innerText = formatCurrency(user.stocks ? user.stocks.reduce((sum, stock) => sum + (stock.quantity * stock.price), 0) : 0);
     document.getElementById("balance-value").innerText = formatCurrency(user.balance);
+
+    const params = new URLSearchParams(window.location.search);
+    const display = params.get("display");
+
+    if (display) {
+        loadContent(display);
+    }
 
     initTabSelectionHandler();
 });
