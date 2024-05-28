@@ -90,6 +90,9 @@ async function loadContent(display) {
             await initSearchBarHandler();
             initBuyFormHandler();
             break;
+
+        case "sell-stocks":
+            break;
     }
 }
 
@@ -206,6 +209,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const display = params.get("display");
 
     if (display) {
+        const buttons = document.querySelectorAll("#tab-selection button");
+        const button = [...buttons].find(b => b.getAttribute("data-display") === display);
+        button.classList.add("active");
         loadContent(display);
     }
 
