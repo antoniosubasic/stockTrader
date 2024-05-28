@@ -3,19 +3,31 @@ import endpoint from "../assets/scripts/config.js";
 
 let marketSymbol;
 
+function formatCurrency(value) {
+    return value.toLocaleString('de-AT', { style: 'currency', currency: 'EUR' });
+}
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('de-AT', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
 function initTabSelectionHandler() {
     const buttons = document.querySelectorAll("#tab-selection button");
     const tabContent = document.getElementById("tab");
+    const user = JSON.parse(localStorage.getItem("user"));
 
     buttons.forEach(button => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
             buttons.forEach(b => b.classList.remove("active"));
             button.classList.add("active");
 
             switch (button.getAttribute("data-display")) {
                 case "stocks":
                     tabContent.innerHTML = `
-                        <div></div>
+                        <ul>
+                            ${user.stocks.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
+                        </ul>
                     `;
                     break;
 
@@ -63,7 +75,7 @@ function initTabSelectionHandler() {
                             </form>
                         </div>
                     `;
-                    initSearchBarHandler();
+                    await initSearchBarHandler();
                     initBuyFormHandler();
                     break;
             }
@@ -173,10 +185,6 @@ function initBuyFormHandler() {
 document.addEventListener("DOMContentLoaded", async () => {
     if (!await auth()) {
         window.location.href = "../signIn";
-    }
-
-    function formatCurrency(value) {
-        return value.toLocaleString('de-AT', { style: 'currency', currency: 'EUR' });
     }
 
     const user = JSON.parse(localStorage.getItem("user"));

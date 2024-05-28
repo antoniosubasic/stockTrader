@@ -8,12 +8,14 @@ export class User {
     _id;
     _name;
     _balance;
+    _stocks;
 
     static from(user) {
         const newUser = new User();
         newUser._id = user.id;
         newUser._name = user.name;
         newUser._balance = user.balance;
+        newUser._stocks = user.stocks;
         return newUser;
     }
 
@@ -81,5 +83,13 @@ export class User {
 
     get name() {
         return this._name;
+    }
+
+    get stocks() {
+        return this._stocks;
+    }
+
+    set stocks(value) {
+        this._stocks = value;
     }
 }
