@@ -92,6 +92,9 @@ async function loadContent(display) {
             break;
 
         case "sell-stocks":
+            tabContent.innerHTML = `
+                <div></div>
+            `;
             break;
     }
 }
@@ -186,7 +189,7 @@ function initBuyFormHandler() {
                 if (response.ok) {
                     const { password, ...json } = await response.json();
                     localStorage.setItem("user", JSON.stringify(json));
-                    alert("Bought successfully");
+                    window.location.reload();
                 } else {
                     alert(response.statusText);
                 }
