@@ -213,7 +213,7 @@ export class Drawer {
         inputButton.type = "submit";
         inputButton.textContent = "Go";
         inputButton.id = "custom-days-button";
-        inputButton.classList.add("btn");
+        inputButton.classList.add("btn", "btn-primary");
         form.appendChild(inputButton);
 
         customDayDiv.appendChild(form);

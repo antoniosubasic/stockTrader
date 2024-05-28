@@ -1,6 +1,8 @@
 import auth from "../assets/scripts/auth.js";
 import endpoint from "../assets/scripts/config.js";
 
+let marketSymbol;
+
 function initTabSelectionHandler() {
     const buttons = document.querySelectorAll("#tab-selection button");
     const tabContent = document.getElementById("tab");
@@ -37,29 +39,32 @@ function initTabSelectionHandler() {
                                     <input
                                         class="form-control me-2"
                                         type="search"
-                                        placeholder="Search"
+                                        placeholder="Search..."
                                         aria-label="Search"
                                         id="search"
                                         required
                                     />
-                                    <button class="btn" type="submit">Search</button>
+                                    <button class="btn btn-primary" type="submit">Search</button>
                                 </form>
                                 <div id="results"></div>
                             </div>
                         </div>
-                        <form class="d-flex" id="buy-form">
-                            <input
-                                class="form-control me-2"
-                                type="number"
-                                placeholder="Amount"
-                                aria-label="Amount"
-                                id="quantity"
-                                required
-                            />
-                            <button class="btn" type="submit">Buy</button>
-                        </form>
+                        <div id="buy-form-container">
+                            <form class="d-flex" id="buy-form">
+                                <input
+                                    class="form-control me-2"
+                                    type="number"
+                                    placeholder="Quantity"
+                                    aria-label="Quantity"
+                                    id="quantity"
+                                    required
+                                />
+                                <button class="btn btn-primary" type="submit">Buy</button>
+                            </form>
+                        </div>
                     `;
                     initSearchBarHandler();
+                    initBuyFormHandler();
                     break;
             }
         });
@@ -87,9 +92,9 @@ async function initSearchBarHandler() {
                 m.name.toLowerCase() === enteredValue.toLowerCase() ||
                 m.symbol.toLowerCase() === enteredValue.toLowerCase()
         );
-        searchForm.search.value = `${market.name}`;
 
-        initBuyFormHandler(market);
+        searchForm.search.value = market.name;
+        marketSymbol = market.symbol;
     });
 }
 
@@ -111,7 +116,8 @@ function filterAndDisplayMarkets(value, resultsDiv, searchForm, markets) {
             resultItem.textContent = `${market.name} (${market.symbol})`;
 
             resultItem.addEventListener("click", () => {
-                searchForm.search.value = `${market.name}`;
+                searchForm.search.value = market.name;
+                marketSymbol = market.symbol;
                 resultsDiv.innerHTML = "";
             });
             newDiv.appendChild(resultItem);
@@ -135,7 +141,7 @@ async function fetchMarkets(fetchUrl) {
     }
 }
 
-function initBuyFormHandler(market) {
+function initBuyFormHandler() {
     document.getElementById("buy-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const quantity = parseInt(document.getElementById("quantity").value);
@@ -143,8 +149,8 @@ function initBuyFormHandler(market) {
         if (!quantity || quantity <= 0) {
             alert("Invalid quantity");
         } else {
-            if (market) {
-                const response = await fetch(`${endpoint}/market/buy?symbol=${market.symbol}&quantity=${quantity}`, {
+            if (marketSymbol) {
+                const response = await fetch(`${endpoint}/market/buy?symbol=${marketSymbol}&quantity=${quantity}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -156,6 +162,8 @@ function initBuyFormHandler(market) {
                     const { password, ...json } = await response.json();
                     localStorage.setItem("user", JSON.stringify(json));
                     alert("Bought successfully");
+                } else {
+                    alert(response.statusText);
                 }
             }
         }
