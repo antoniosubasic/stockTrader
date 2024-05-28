@@ -4,7 +4,7 @@ body {
     padding: 0;
 }
 
-main {
+.main-centered {
     display: flex;
     flex-direction: column;
     justify-content: center;
