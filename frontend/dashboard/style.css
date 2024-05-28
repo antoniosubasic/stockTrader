@@ -62,12 +62,11 @@
     align-items: center;
 }
 
-#search,
 #buy-form {
     width: 25rem;
 }
 
-#searchBar {
+/* #searchBar {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -99,4 +98,4 @@
 
 .result-item:hover {
     background-color: #dee2e6;
-}
+} */
