@@ -66,7 +66,7 @@ export class User {
         }
 
         user.stocks.push({ symbol, quantity, price, timestamp });
-        user.balance -= quantity * price;
+        user.balance -= quantity * price + 75;
         userController.update(user);
 
         return user;
