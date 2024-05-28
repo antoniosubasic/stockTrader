@@ -1,7 +1,180 @@
 import auth from "../assets/scripts/auth.js";
+import endpoint from "../assets/scripts/config.js";
+
+function initTabSelectionHandler() {
+    const buttons = document.querySelectorAll("#tab-selection button");
+    const tabContent = document.getElementById("tab");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            buttons.forEach(b => b.classList.remove("active"));
+            button.classList.add("active");
+
+            switch (button.getAttribute("data-display")) {
+                case "stocks":
+                    tabContent.innerHTML = `
+                        <div></div>
+                    `;
+                    break;
+
+                case "transactions":
+                    tabContent.innerHTML = `
+                        <div></div>
+                    `;
+                    break;
+
+                case "buy-stocks":
+                    tabContent.innerHTML = `
+                        <h1>BUY STOCKS</h1>
+                        <div id="searchBar">
+                            <div>
+                                <form
+                                    class="d-flex"
+                                    role="search"
+                                    id="search-form"
+                                    autocomplete="off"
+                                >
+                                    <input
+                                        class="form-control me-2"
+                                        type="search"
+                                        placeholder="Search"
+                                        aria-label="Search"
+                                        id="search"
+                                        required
+                                    />
+                                    <button class="btn" type="submit">Search</button>
+                                </form>
+                                <div id="results"></div>
+                            </div>
+                        </div>
+                        <form class="d-flex" id="buy-form">
+                            <input
+                                class="form-control me-2"
+                                type="number"
+                                placeholder="Amount"
+                                aria-label="Amount"
+                                id="quantity"
+                                required
+                            />
+                            <button class="btn" type="submit">Buy</button>
+                        </form>
+                    `;
+                    initSearchBarHandler();
+                    break;
+            }
+        });
+    });
+};
+
+async function initSearchBarHandler() {
+    const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("search");
+    const resultsDiv = document.getElementById("results");
+
+    const markets = await fetchMarkets(`${endpoint}/markets`);
+
+    searchInput.addEventListener("input", (e) => {
+        const value = e.target.value;
+        filterAndDisplayMarkets(value, resultsDiv, searchForm, markets);
+    });
+
+    searchForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const enteredValue = searchForm.search.value;
+        resultsDiv.innerHTML = "";
+        const market = markets.find(
+            (m) =>
+                m.name.toLowerCase() === enteredValue.toLowerCase() ||
+                m.symbol.toLowerCase() === enteredValue.toLowerCase()
+        );
+        searchForm.search.value = `${market.name}`;
+
+        initBuyFormHandler(market);
+    });
+}
+
+function filterAndDisplayMarkets(value, resultsDiv, searchForm, markets) {
+    resultsDiv.innerHTML = "";
+    const newDiv = document.createElement("div");
+    if (value) {
+        const filteredMarkets = markets
+            .filter(
+                (market) =>
+                    market.symbol.toLowerCase().includes(value.toLowerCase()) ||
+                    market.name.toLowerCase().includes(value.toLowerCase())
+            )
+            .slice(0, 5);
+
+        filteredMarkets.forEach((market) => {
+            const resultItem = document.createElement("p");
+            resultItem.classList.add("result-item");
+            resultItem.textContent = `${market.name} (${market.symbol})`;
+
+            resultItem.addEventListener("click", () => {
+                searchForm.search.value = `${market.name}`;
+                resultsDiv.innerHTML = "";
+            });
+            newDiv.appendChild(resultItem);
+        });
+
+        if (newDiv.children.length === 0) {
+            resultsDiv.innerHTML = `<div><p class="result-item">No results</p></div>`;
+        } else {
+            resultsDiv.appendChild(newDiv);
+        }
+    }
+}
+
+async function fetchMarkets(fetchUrl) {
+    const response = await fetch(fetchUrl);
+    if (response.ok) {
+        return await response.json();
+    } else {
+        console.error(await response.text());
+        return [];
+    }
+}
+
+function initBuyFormHandler(market) {
+    document.getElementById("buy-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const quantity = parseInt(document.getElementById("quantity").value);
+
+        if (!quantity || quantity <= 0) {
+            alert("Invalid quantity");
+        } else {
+            if (market) {
+                const response = await fetch(`${endpoint}/market/buy?symbol=${market.symbol}&quantity=${quantity}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const { password, ...json } = await response.json();
+                    localStorage.setItem("user", JSON.stringify(json));
+                    alert("Bought successfully");
+                }
+            }
+        }
+    });
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (!await auth()) {
         window.location.href = "../signIn";
     }
+
+    function formatCurrency(value) {
+        return value.toLocaleString('de-AT', { style: 'currency', currency: 'EUR' });
+    }
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    document.getElementById("share-in-stocks-value").innerText = formatCurrency(user.stocks ? user.stocks.reduce((sum, stock) => sum + (stock.quantity * stock.price), 0) : 0);
+    document.getElementById("balance-value").innerText = formatCurrency(user.balance);
+
+    initTabSelectionHandler();
 });

@@ -15,7 +15,7 @@ export default async function auth() {
     if (response.status === 200) {
         const decoded = await response.json();
         
-        if (decoded.name !== user.name || decoded.id !== user.id || decoded.balance !== user.balance) {
+        if (decoded.name !== user.name || decoded.id !== user.id) {
             localStorage.removeItem("jwt");
             localStorage.removeItem("user");
             return false;

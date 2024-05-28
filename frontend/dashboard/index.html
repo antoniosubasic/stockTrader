@@ -13,6 +13,7 @@
         />
         <link rel="stylesheet" href="../assets/styles/navbar.css" />
         <link rel="stylesheet" href="../assets/styles/main.css" />
+        <link rel="stylesheet" href="./style.css" />
         <script type="module" src="../assets/scripts/navbar.js" defer></script>
         <script type="module" src="./app.js" defer></script>
     </head>
@@ -58,11 +59,31 @@
         <main>
             <div id="overview">
                 <div>
-                    <p id="value-in-stocks"></p>
-                    <p id="total-value"></p>
+                    <p id="share-in-stocks">
+                        <span>My share in stocks:</span>
+                        <span id="share-in-stocks-value"></span>
+                    </p>
+                    <p id="balance">
+                        <span>My balance:</span>
+                        <span id="balance-value"></span>
+                    </p>
                 </div>
                 <div></div>
             </div>
+            <div id="tab-selection">
+                <div class="btn-group" role="group" aria-label="Tab Selection">
+                    <button data-display="stocks" type="button" class="btn btn-outline-primary">
+                        my stocks
+                    </button>
+                    <button data-display="transactions" type="button" class="btn btn-outline-primary">
+                        my transactions
+                    </button>
+                    <button data-display="buy-stocks" type="button" class="btn btn-outline-primary">
+                        buy stocks
+                    </button>
+                </div>
+            </div>
+            <div id="tab"></div>
         </main>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
