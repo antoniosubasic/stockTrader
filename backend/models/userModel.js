@@ -56,11 +56,26 @@ export class User {
         return user && user.name === name ? true : false;
     }
 
+    static buy(userId, symbol, quantity, price, timestamp) {
+        const user = userController.getById(userId);
+
+        if (!user.stocks) {
+            user.stocks = [];
+        }
+
+        user.stocks.push({ symbol, quantity, price, timestamp });
+        user.balance -= quantity * price;
+        userController.update(user);
+
+        return user;
+    }
+
     getData() {
         return {
             id: this._id,
             name: this._name,
-            balance: this._balance
+            balance: this._balance,
+            stocks: this.stocks ? this.stocks : []
         };
     }
 

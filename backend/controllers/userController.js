@@ -37,6 +37,11 @@ export class Controller {
         this.save();
     }
 
+    update(user) {
+        this._users = this._users.map(u => u.id === user.id ? user : u);
+        this.save();
+    }
+
     get users() {
         return this._users;
     }

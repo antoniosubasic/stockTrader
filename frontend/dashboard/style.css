@@ -1,0 +1,108 @@
+#overview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 6vh 8vw;
+}
+
+#overview > div:first-child {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 2rem;
+    align-items: center;
+}
+
+#share-in-stocks,
+#balance {
+    display: contents;
+}
+
+#share-in-stocks span:first-child,
+#balance span:first-child {
+    grid-column: 1;
+}
+
+#share-in-stocks span:last-child,
+#balance span:last-child {
+    grid-column: 2;
+    text-align: right;
+}
+
+#tab-selection {
+    margin: 3vh 15vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tab-selection > .btn-group > button:first-child {
+    border-top-left-radius: 0.2rem !important;
+    border-bottom-left-radius: 0.2rem !important;
+}
+
+#tab-selection > .btn-group > button:last-child {
+    border-top-right-radius: 0.2rem !important;
+    border-bottom-right-radius: 0.2rem !important;
+}
+
+#tab {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#tab > h1 {
+    text-align: center;
+}
+
+#search {
+    width: 25rem;
+    border: 2px black solid;
+}
+
+#search:focus {
+    box-shadow: 0 0 5px #2a86f8;
+}
+
+#searchBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#results {
+    position: absolute;
+    width: 25rem;
+    z-index: 1;
+    background-color: white;
+}
+
+#results > div {
+    padding-left: 0 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.result-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.5s ease;
+    margin: 0;
+    cursor: pointer;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item:hover {
+    background-color: #dee2e6;
+}
+
+#search-form > button {
+    font-weight: 650;
+    border: 2px black solid;
+}
+
+#search-form > button:hover {
+    color: #2a86f8 !important;
+}

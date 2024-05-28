@@ -19,7 +19,8 @@ app.post("/user/signin", (req, res) => {
 
     if (user) {
         const userData = user.getData();
-        const token = jwt.sign(userData, process.env.JWT_SECRET);
+        const { balance, stocks, ...jwtData } = userData;
+        const token = jwt.sign(jwtData, process.env.JWT_SECRET);
         return res.status(status).json({ user: userData, token });
     } else {
         return res.status(status).send(message);
@@ -71,6 +72,36 @@ app.get("/market", async (req, res) => {
     return status === 200
         ? res.status(status).json(data)
         : res.status(status).send(message);
+});
+
+app.post("/market/buy", async (req, res) => {
+    const { symbol, quantity } = req.query;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            if (User.exists(decoded.id, decoded.name)) {
+                const market = new Market(symbol);
+                const [data, [status, message]] = await market.get();
+
+                if (status === 200) {
+                    const latest = data.stockPrices[data.stockPrices.length - 1];
+                    const user = User.buy(decoded.id, symbol, parseInt(quantity), latest.close, latest.timestamp);
+                    return res.status(200).json(user);
+                } else {
+                    return res.status(status).send(message);
+                }
+            } else {
+                return res.status(404).send("user not found");
+            }
+        } catch (error) {
+            return res.status(401).send("invalid token");
+        }
+    } else {
+        return res.status(401).send("missing token");
+    }
 });
 
 app.get("/markets", (_, res) => {
