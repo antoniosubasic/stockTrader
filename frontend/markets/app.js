@@ -11,7 +11,9 @@ async function init() {
 
     await updateStocks();
 
-    performSearch("NVDA");
+    const urlParams = new URLSearchParams(window.location.search);
+    const symbol = urlParams.get('symbol') || "NVDA";
+    performSearch(symbol);
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
@@ -44,6 +46,8 @@ async function performSearch(symbol) {
         await drawer.drawMarket();
 
         await updateStocks();
+
+        window.history.pushState({}, '', `?symbol=${symbol}`);
     } else {
         console.error("market not found");
     }
