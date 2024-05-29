@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const buttons = document.querySelectorAll("#tab-selection button");
         const button = [...buttons].find(b => b.getAttribute("data-display") === display);
         button.classList.add("active");
-        loadContent(display);
+        await loadContent(display);
     }
 
     initTabSelectionHandler();
