@@ -4,7 +4,7 @@ import endpoint from "../assets/scripts/config.js";
 let marketSymbol;
 
 function formatCurrency(value) {
-    return value.toLocaleString('de-AT', { style: 'currency', currency: 'EUR' });
+    return value.toLocaleString('de-AT', { style: 'currency', currency: 'USD' });
 }
 
 function formatTimestamp(timestamp) {
