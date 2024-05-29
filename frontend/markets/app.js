@@ -13,6 +13,10 @@ async function init() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const symbol = urlParams.get('symbol') || "NVDA";
+    const market = markets.find((m) => m.symbol === symbol);
+    if (market.name) {
+        searchForm.search.value = market.name;
+    }
     performSearch(symbol);
 
     searchInput.addEventListener("input", (e) => {
@@ -30,7 +34,7 @@ async function init() {
                 m.symbol.toLowerCase() === enteredValue.toLowerCase()
         );
         const symbol = market ? market.symbol : "";
-        searchForm.search.value = `${market.name}`;
+        searchForm.search.value = market.name;
 
         performSearch(symbol);
     });
