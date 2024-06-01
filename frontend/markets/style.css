@@ -8,3 +8,35 @@ body {
     text-align: center;
     margin: 0.75rem 0;
 }
+
+#modal .centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+#modal .grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 1rem;
+    margin: 0;
+}
+
+#modal .grid h4 {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#modal .grid p {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#modal .grid button {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    justify-self: center;
+    align-self: center;
+}
