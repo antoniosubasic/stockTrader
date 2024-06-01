@@ -7,9 +7,20 @@ export class Drawer {
         this.canvasDiv = document.getElementById("chart-container");
         this.market;
         this.stockPrices;
+        this.modal = new bootstrap.Modal(document.getElementById('modal'));
+        this.modalContent = document.querySelector("#modal .modal-content");
     }
 
     async getMarket() {
+        this.modalContent.innerHTML = `
+            <div class="modal-body centered">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Signing in...</span>
+                </div>
+            </div>
+        `;
+        this.modal.show();
+
         const response = await fetch(
             `${endpoint}/market?symbol=${this.symbol}`
         );
@@ -17,23 +28,26 @@ export class Drawer {
         if (response.ok) {
             this.market = await response.json();
             this.stockPrices = this.market.stockPrices;
+            this.modal.hide();
             return true;
         } else if (response.status === 429) { // API data limit reached (too many requests)
-            
-            const errorDiv = `
-            <div class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">Too many requests!</h4>
-                <p>
-                    Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. <br>
-                    Please try again in a few minutes.
-                </p>
-            </div>
+            this.modalContent.innerHTML = `
+                <div class="modal-body alert alert-danger grid" role="alert">
+                    <h4 class="alert-heading">Too many requests!</h4>
+                    <p>
+                        Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. Please try again in a few minutes.
+                    </p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             `;
-            this.canvasDiv.innerHTML = errorDiv;
 
             return false;
         } else {
-            console.error(await response.text());
+            this.modalContent.innerHTML = `
+                <div class="modal-body centered">
+                    <p class="error">${await response.text()}</p>
+                </div>
+            `;
             return false;
         }
     }
@@ -46,9 +60,9 @@ export class Drawer {
         }
 
         this.rearrangeDiv();
-    
+
         let days = Math.min(this.stockPrices.length, inputDays);
-    
+
         const ctx = document.getElementById("chart-canvas").getContext("2d");
 
         const labels = this.stockPrices
@@ -137,12 +151,10 @@ export class Drawer {
         const stockPrice = this.stockPrices[this.stockPrices.length - 1];
         importantDataDiv.innerHTML = `
         <span id="last-price">${stockPrice.close.toFixed(2)}</span>
-        <span class="${stockPrice.valueChange >= 0 ? "green" : "red"}">${
-            stockPrice.valueChange >= 0 ? "+" : ""
-        }${stockPrice.valueChange.toFixed(2)}</span>
-        <span class="${stockPrice.percentChange >= 0 ? "green" : "red"}">(${
-            stockPrice.valueChange >= 0 ? "+" : ""
-        }${stockPrice.percentChange.toFixed(2)}%)</span>
+        <span class="${stockPrice.valueChange >= 0 ? "green" : "red"}">${stockPrice.valueChange >= 0 ? "+" : ""
+            }${stockPrice.valueChange.toFixed(2)}</span>
+        <span class="${stockPrice.percentChange >= 0 ? "green" : "red"}">(${stockPrice.valueChange >= 0 ? "+" : ""
+            }${stockPrice.percentChange.toFixed(2)}%)</span>
         `;
         this.marketDiv.appendChild(importantDataDiv);
 
