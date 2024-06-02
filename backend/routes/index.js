@@ -74,6 +74,21 @@ app.get("/market", async (req, res) => {
         : res.status(status).send(message);
 });
 
+app.get("/market/latest", (req, res) => {
+    const { symbol } = req.query;
+
+    if (!symbol) {
+        return res.status(400).send("missing symbol query parameter");
+    }
+
+    const market = new Market(symbol);
+    const [data, [status, message]] = market.getLatestData();
+
+    return status === 200
+        ? res.status(status).json(data)
+        : res.status(status).send(message);
+});
+
 app.post("/market/buy", async (req, res) => {
     const { symbol, quantity } = req.query;
     const token = req.headers.authorization?.split(" ")[1];

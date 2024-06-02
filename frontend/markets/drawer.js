@@ -15,7 +15,7 @@ export class Drawer {
         this.modalContent.innerHTML = `
             <div class="modal-body centered">
                 <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Signing in...</span>
+                    <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
         `;

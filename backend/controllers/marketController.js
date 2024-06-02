@@ -41,6 +41,11 @@ export class Controller {
         return this._markets.find(market => market.symbol === symbol);
     }
 
+    getLatestData(symbol) {
+        const market = this.get(symbol);
+        return market.stockPrices[market.stockPrices.length - 1];
+    }
+
     getTopMarkets(count, isGainer) {
         const marketsWithPrices = this._markets.filter(market => market.stockPrices && market.stockPrices.length > 0);
 

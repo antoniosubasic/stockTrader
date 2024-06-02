@@ -106,7 +106,7 @@
     color: red;
 }
 
-#stock-losers {
+#stock-losers, #stock-gainers {
     margin-top: 2rem;
 }
 
