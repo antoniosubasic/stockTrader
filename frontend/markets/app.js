@@ -9,19 +9,19 @@ async function init() {
 
     const markets = await fetchMarkets(`${endpoint}/markets`);
 
-    await updateStocks();
-
     const urlParams = new URLSearchParams(window.location.search);
-    const symbol = urlParams.get('symbol') || "NVDA";
-    const market = markets.find((m) => m.symbol === symbol);
-    if (market.name) {
-        searchForm.search.value = market.name;
+    const symbol = urlParams.get("symbol");
+    let market = markets.find((m) => m.symbol === symbol);
+    if (market) {
+        performSearch(market.symbol, market.name);
+    } else {
+        market = markets.find((m) => m.symbol === "NVDA");
+        performSearch(market.symbol, market.name);
     }
-    performSearch(symbol);
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
-        filterAndDisplayMarkets(value, resultsDiv, searchForm, markets);
+        filterAndDisplayMarkets(value, resultsDiv, markets);
     });
 
     searchForm.addEventListener("submit", async (e) => {
@@ -33,10 +33,12 @@ async function init() {
                 m.name.toLowerCase() === enteredValue.toLowerCase() ||
                 m.symbol.toLowerCase() === enteredValue.toLowerCase()
         );
-        const symbol = market ? market.symbol : "";
-        searchForm.search.value = market.name;
 
-        performSearch(symbol);
+        if (market) {
+            performSearch(market.symbol, market.name);
+        } else {
+            console.error("market not found");
+        }
     });
 
     toggleButton.addEventListener("click", () => {
@@ -44,14 +46,30 @@ async function init() {
     });
 }
 
-async function performSearch(symbol) {
+async function performSearch(symbol, marketName) {
     if (symbol !== "") {
         const drawer = new Drawer(symbol);
         await drawer.drawMarket();
 
         await updateStocks();
 
-        window.history.pushState({}, '', `?symbol=${symbol}`);
+        const searchForm = document.getElementById("search-form");
+
+        window.history.pushState({}, "", `?symbol=${symbol}`);
+        searchForm.search.value = marketName;
+
+        let recentViewed = JSON.parse(localStorage.getItem("recentViewed")) || [];
+        let existingIndex = recentViewed.findIndex((item) => item.symbol === symbol);
+        if (existingIndex !== -1) {
+            recentViewed.splice(existingIndex, 1);
+        }
+        recentViewed.unshift({ symbol });
+        if (recentViewed.length > 7) {
+            recentViewed.pop();
+        }
+        localStorage.setItem("recentViewed", JSON.stringify(recentViewed));
+
+        updateRecentViewed();
     } else {
         console.error("market not found");
     }
@@ -63,16 +81,18 @@ function handleToggleButton() {
     const chartContainer = $("#chart-container");
 
     if (bar.width() > 0) {
-        bar.animate({ width: '0' }, 500, function() {
+        bar.animate({ width: "0" }, 500, function () {
             bar.hide();
             toggleButton.text(">");
         });
-        chartContainer.animate({ height: '80vh', width: '85vw' }, 500);
+        chartContainer.animate({ height: "80vh", width: "85vw" }, 500);
     } else {
-        bar.css('width', '0').show().animate({ width: '100%' }, 500, function() {
-            toggleButton.text("<");
-        });
-        chartContainer.animate({ height: '70vh', width: '75vw' }, 500);
+        bar.css("width", "0")
+            .show()
+            .animate({ width: "100%" }, 500, function () {
+                toggleButton.text("<");
+            });
+        chartContainer.animate({ height: "70vh", width: "75vw" }, 500);
     }
 }
 
@@ -146,10 +166,7 @@ function createStockDiv(stock, container) {
     );
 
     stockDiv.addEventListener("click", () => {
-        const searchForm = document.getElementById("search-form");
-        searchForm.search.value = `${stock.name}`;
-
-        performSearch(stock.symbol);
+        performSearch(stock.symbol, stock.name);
     });
 
     stockDiv.appendChild(stockName);
@@ -159,7 +176,7 @@ function createStockDiv(stock, container) {
     container.appendChild(stockDiv);
 }
 
-function filterAndDisplayMarkets(value, resultsDiv, searchForm, markets) {
+function filterAndDisplayMarkets(value, resultsDiv, markets) {
     resultsDiv.innerHTML = "";
     const newDiv = document.createElement("div");
     if (value) {
@@ -177,9 +194,7 @@ function filterAndDisplayMarkets(value, resultsDiv, searchForm, markets) {
             resultItem.textContent = `${market.name} (${market.symbol})`;
 
             resultItem.addEventListener("click", () => {
-                searchForm.search.value = `${market.name}`;
-                resultsDiv.innerHTML = "";
-                performSearch(market.symbol);
+                performSearch(market.symbol, market.name);
             });
             newDiv.appendChild(resultItem);
         });
@@ -190,6 +205,32 @@ function filterAndDisplayMarkets(value, resultsDiv, searchForm, markets) {
             resultsDiv.appendChild(newDiv);
         }
     }
+}
+
+async function updateRecentViewed() {
+    const recentViewedDiv = document.getElementById("recent-viewed");
+    recentViewedDiv.innerHTML = "<h4>Recently Viewed</h4>";
+
+    const firstRow = `
+    <div class="stock-item stock-item-display">
+        <span class="stock-name">Symbol</span>
+        <span class="stock-price">Price</span>
+        <span class="stock-change-value">Change</span>
+        <span class="stock-change-percent">%Change</span>
+    </div>`;
+    recentViewedDiv.innerHTML += firstRow;
+
+    const recentViewed = JSON.parse(localStorage.getItem("recentViewed")) || [];
+
+    recentViewed.forEach(async (item) => {
+        const market = await fetchMarkets(`${endpoint}/market/latest?symbol=${item.symbol}`);
+        createStockDiv({
+            symbol: item.symbol,
+            currentPrice: market.close,
+            valueChange: market.valueChange,
+            percentChange: market.percentChange,
+        }, recentViewedDiv);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", init);
