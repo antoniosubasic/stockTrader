@@ -69,7 +69,7 @@ async function performSearch(symbol, marketName) {
         }
         localStorage.setItem("recentViewed", JSON.stringify(recentViewed));
 
-        updateRecentViewed();
+        await updateRecentViewed();
     } else {
         console.error("market not found");
     }
@@ -222,15 +222,16 @@ async function updateRecentViewed() {
 
     const recentViewed = JSON.parse(localStorage.getItem("recentViewed")) || [];
 
-    recentViewed.forEach(async (item) => {
+    for (const item of recentViewed) {
         const market = await fetchMarkets(`${endpoint}/market/latest?symbol=${item.symbol}`);
+
         createStockDiv({
             symbol: item.symbol,
             currentPrice: market.close,
             valueChange: market.valueChange,
             percentChange: market.percentChange,
         }, recentViewedDiv);
-    });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", init);
