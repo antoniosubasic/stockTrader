@@ -83,11 +83,11 @@
 }
 
 .stock-item span {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 .stock-item-display span {
     font-weight: 650;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 
 .stock-item span:not(:first-child) {
@@ -171,9 +171,19 @@
     background-color: #2a86f8;
     color: white;
     border-radius: 0.1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
 }
 
 #stock-div {
     border-left: #2a86f8 solid 1px;
     padding-left: 0.5rem;
+}
+
+#stock-gainers-heading, #stock-losers-heading, #recent-viewed-heading {
+    cursor: pointer;
+}
+
+#stock-gainers-heading:hover, #stock-losers-heading:hover, #recent-viewed-heading:hover {
+    text-decoration: underline;
 }
