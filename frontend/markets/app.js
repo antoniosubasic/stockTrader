@@ -13,11 +13,37 @@ async function init() {
     const symbol = urlParams.get("symbol");
     let market = markets.find((m) => m.symbol === symbol);
     if (market) {
-        performSearch(market.symbol, market.name);
+        await performSearch(market.symbol, market.name);
     } else {
         market = markets.find((m) => m.symbol === "NVDA");
-        performSearch(market.symbol, market.name);
+        await performSearch(market.symbol, market.name);
     }
+
+    const stockGainersHeading = document.getElementById(
+        "stock-gainers-heading"
+    );
+    const stockLosersHeading = document.getElementById("stock-losers-heading");
+    const recentViewedHeading = document.getElementById(
+        "recent-viewed-heading"
+    );
+
+    stockGainersHeading.addEventListener("click", () => {
+        animateDiv("stock-gainers-inner");
+        const span = stockGainersHeading.querySelector("span");
+        span.textContent = span.textContent === ">" ? "<" : ">";
+    });
+
+    stockLosersHeading.addEventListener("click", () => {
+        animateDiv("stock-losers-inner");
+        const span = stockLosersHeading.querySelector("span");
+        span.textContent = span.textContent === ">" ? "<" : ">";
+    });
+
+    recentViewedHeading.addEventListener("click", () => {
+        animateDiv("recent-viewed-inner");
+        const span = recentViewedHeading.querySelector("span");
+        span.textContent = span.textContent === ">" ? "<" : ">";
+    });
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
@@ -35,7 +61,7 @@ async function init() {
         );
 
         if (market) {
-            performSearch(market.symbol, market.name);
+            await performSearch(market.symbol, market.name);
         } else {
             console.error("market not found");
         }
@@ -58,8 +84,11 @@ async function performSearch(symbol, marketName) {
         window.history.pushState({}, "", `?symbol=${symbol}`);
         searchForm.search.value = marketName;
 
-        let recentViewed = JSON.parse(localStorage.getItem("recentViewed")) || [];
-        let existingIndex = recentViewed.findIndex((item) => item.symbol === symbol);
+        let recentViewed =
+            JSON.parse(localStorage.getItem("recentViewed")) || [];
+        let existingIndex = recentViewed.findIndex(
+            (item) => item.symbol === symbol
+        );
         if (existingIndex !== -1) {
             recentViewed.splice(existingIndex, 1);
         }
@@ -83,14 +112,14 @@ function handleToggleButton() {
     if (bar.width() > 0) {
         bar.animate({ width: "0" }, 500, function () {
             bar.hide();
-            toggleButton.text(">");
+            toggleButton.text("<");
         });
         chartContainer.animate({ height: "80vh", width: "85vw" }, 500);
     } else {
         bar.css("width", "0")
             .show()
             .animate({ width: "100%" }, 500, function () {
-                toggleButton.text("<");
+                toggleButton.text(">");
             });
         chartContainer.animate({ height: "70vh", width: "75vw" }, 500);
     }
@@ -110,8 +139,17 @@ async function updateStocks() {
     const stockGainers = document.getElementById("stock-gainers");
     const stockLosers = document.getElementById("stock-losers");
 
-    stockGainers.innerHTML = "<h4>Stock Gainers</h4>";
-    stockLosers.innerHTML = "<h4>Stock Losers</h4>";
+    stockGainers.innerHTML =
+        '<h6 id="stock-gainers-heading">Stock Gainers <span>><span></h6>';
+    stockLosers.innerHTML = '<h6 id="stock-losers-heading">Stock Losers <span>><span></h6>';
+
+    const stockGainersInnerDiv = document.createElement("div");
+    stockGainersInnerDiv.id = "stock-gainers-inner";
+    stockGainers.appendChild(stockGainersInnerDiv);
+
+    const stockLosersInnerDiv = document.createElement("div");
+    stockLosersInnerDiv.id = "stock-losers-inner";
+    stockLosers.appendChild(stockLosersInnerDiv);
 
     const firstRow = `
     <div class="stock-item stock-item-display">
@@ -120,18 +158,18 @@ async function updateStocks() {
         <span class="stock-change-value">Change</span>
         <span class="stock-change-percent">%Change</span>
     </div>`;
-    stockGainers.innerHTML += firstRow;
-    stockLosers.innerHTML += firstRow;
+    stockGainersInnerDiv.innerHTML += firstRow;
+    stockLosersInnerDiv.innerHTML += firstRow;
 
     const gainers = await fetchMarkets(`${endpoint}/markets/gainers?count=7`);
     const losers = await fetchMarkets(`${endpoint}/markets/losers?count=7`);
 
     gainers.forEach((gainer) => {
-        createStockDiv(gainer, stockGainers);
+        createStockDiv(gainer, stockGainersInnerDiv);
     });
 
     losers.forEach((loser) => {
-        createStockDiv(loser, stockLosers);
+        createStockDiv(loser, stockLosersInnerDiv);
     });
 }
 
@@ -165,8 +203,8 @@ function createStockDiv(stock, container) {
         stock.percentChange >= 0 ? "green" : "red"
     );
 
-    stockDiv.addEventListener("click", () => {
-        performSearch(stock.symbol, stock.name);
+    stockDiv.addEventListener("click", async () => {
+        await performSearch(stock.symbol, stock.name);
     });
 
     stockDiv.appendChild(stockName);
@@ -193,8 +231,8 @@ function filterAndDisplayMarkets(value, resultsDiv, markets) {
             resultItem.classList.add("result-item");
             resultItem.textContent = `${market.name} (${market.symbol})`;
 
-            resultItem.addEventListener("click", () => {
-                performSearch(market.symbol, market.name);
+            resultItem.addEventListener("click", async () => {
+                await performSearch(market.symbol, market.name);
             });
             newDiv.appendChild(resultItem);
         });
@@ -209,7 +247,12 @@ function filterAndDisplayMarkets(value, resultsDiv, markets) {
 
 async function updateRecentViewed() {
     const recentViewedDiv = document.getElementById("recent-viewed");
-    recentViewedDiv.innerHTML = "<h4>Recently Viewed</h4>";
+    recentViewedDiv.innerHTML =
+        '<h6 id="recent-viewed-heading">Recently Viewed <span>><span></h6>';
+
+    const recentViewedInnerDiv = document.createElement("div");
+    recentViewedInnerDiv.id = "recent-viewed-inner";
+    recentViewedDiv.appendChild(recentViewedInnerDiv);
 
     const firstRow = `
     <div class="stock-item stock-item-display">
@@ -218,19 +261,34 @@ async function updateRecentViewed() {
         <span class="stock-change-value">Change</span>
         <span class="stock-change-percent">%Change</span>
     </div>`;
-    recentViewedDiv.innerHTML += firstRow;
+    recentViewedInnerDiv.innerHTML += firstRow;
 
     const recentViewed = JSON.parse(localStorage.getItem("recentViewed")) || [];
 
     for (const item of recentViewed) {
-        const market = await fetchMarkets(`${endpoint}/market/latest?symbol=${item.symbol}`);
+        const market = await fetchMarkets(
+            `${endpoint}/market/latest?symbol=${item.symbol}`
+        );
 
-        createStockDiv({
-            symbol: item.symbol,
-            currentPrice: market.close,
-            valueChange: market.valueChange,
-            percentChange: market.percentChange,
-        }, recentViewedDiv);
+        createStockDiv(
+            {
+                symbol: item.symbol,
+                currentPrice: market.close,
+                valueChange: market.valueChange,
+                percentChange: market.percentChange,
+            },
+            recentViewedInnerDiv
+        );
+    }
+}
+
+function animateDiv(divId) {
+    const div = $(`#${divId}`);
+
+    if (div.is(":visible")) {
+        div.slideUp(500);
+    } else {
+        div.slideDown(500);
     }
 }
 
