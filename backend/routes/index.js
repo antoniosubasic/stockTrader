@@ -47,7 +47,7 @@ app.get("/user/auth", (req, res) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             if (User.exists(decoded.id, decoded.name)) {
-                return res.status(200).json({ id: decoded.id, name: decoded.name, balance: decoded.balance });
+                return res.status(200).json({ id: decoded.id, name: decoded.name });
             } else {
                 return res.status(404).send("user not found");
             }
