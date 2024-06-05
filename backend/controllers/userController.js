@@ -26,7 +26,8 @@ export class Controller {
             id: this._users.length,
             name,
             password,
-            balance: 50_000
+            balance: 50_000,
+            favoriteStock: "NVDA",
         });
 
         this.save();

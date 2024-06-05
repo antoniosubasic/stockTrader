@@ -27,6 +27,32 @@ app.post("/user/signin", (req, res) => {
     }
 });
 
+app.post("/user/favoriteStock", (req, res) => {
+    const { favoriteStock } = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!favoriteStock) {
+        return res.status(400).send("missing favoriteStock");
+    }
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            if (User.exists(decoded.id, decoded.name)) {
+                const user = User.setFavoriteStock(decoded.id, favoriteStock);
+                return res.status(200).json(user);
+            } else {
+                return res.status(404).send("user not found");
+            }
+        } catch (error) {
+            return res.status(401).send("invalid token");
+        }
+    } else {
+        return res.status(401).send("missing token");
+    }
+});
+
 app.post("/user/signup", (req, res) => {
     const { username, password } = req.body;
     const [status, message] = User.signUp(username, password);
@@ -47,7 +73,9 @@ app.get("/user/auth", (req, res) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             if (User.exists(decoded.id, decoded.name)) {
-                return res.status(200).json({ id: decoded.id, name: decoded.name });
+                return res
+                    .status(200)
+                    .json({ id: decoded.id, name: decoded.name });
             } else {
                 return res.status(404).send("user not found");
             }
@@ -102,8 +130,15 @@ app.post("/market/buy", async (req, res) => {
                 const [data, [status, message]] = await market.get();
 
                 if (status === 200) {
-                    const latest = data.stockPrices[data.stockPrices.length - 1];
-                    const user = User.buy(decoded.id, symbol, parseInt(quantity), latest.close, latest.timestamp);
+                    const latest =
+                        data.stockPrices[data.stockPrices.length - 1];
+                    const user = User.buy(
+                        decoded.id,
+                        symbol,
+                        parseInt(quantity),
+                        latest.close,
+                        latest.timestamp
+                    );
                     return res.status(200).json(user);
                 } else {
                     return res.status(status).send(message);

@@ -38,7 +38,7 @@ async function loadContent(display) {
         case "stocks":
             tabContent.innerHTML = `
                 <ul>
-                    ${user.stocks.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
+                    ${user.transactions.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
                 </ul>
             `;
             break;
@@ -201,11 +201,12 @@ function initBuyFormHandler() {
 document.addEventListener("DOMContentLoaded", async () => {
     if (!await auth()) {
         window.location.href = "../signIn";
+        return;
     }
 
     const user = JSON.parse(localStorage.getItem("user"));
 
-    document.getElementById("share-in-stocks-value").innerText = formatCurrency(user.stocks ? user.stocks.reduce((sum, stock) => sum + (stock.quantity * stock.price), 0) : 0);
+    document.getElementById("share-in-stocks-value").innerText = formatCurrency(user.transactions ? user.transactions.reduce((sum, stock) => sum + (stock.quantity * stock.price), 0) : 0);
     document.getElementById("balance-value").innerText = formatCurrency(user.balance);
 
     const params = new URLSearchParams(window.location.search);

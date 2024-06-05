@@ -1,5 +1,6 @@
 import endpoint from "../assets/scripts/config.js";
 import { Drawer } from "./drawer.js";
+import auth from "../assets/scripts/auth.js";
 
 async function init() {
     const searchForm = document.getElementById("search-form");
@@ -14,36 +15,14 @@ async function init() {
     let market = markets.find((m) => m.symbol === symbol);
     if (market) {
         await performSearch(market.symbol, market.name);
+    } else if (await auth()) {
+        let user = JSON.parse(localStorage.getItem("user"));
+        market = markets.find((m) => m.symbol === user.favoriteStock);
+        await performSearch(market.symbol, market.name);
     } else {
         market = markets.find((m) => m.symbol === "NVDA");
         await performSearch(market.symbol, market.name);
     }
-
-    const stockGainersHeading = document.getElementById(
-        "stock-gainers-heading"
-    );
-    const stockLosersHeading = document.getElementById("stock-losers-heading");
-    const recentViewedHeading = document.getElementById(
-        "recent-viewed-heading"
-    );
-
-    stockGainersHeading.addEventListener("click", () => {
-        animateDiv("stock-gainers-inner");
-        const span = stockGainersHeading.querySelector("span");
-        span.textContent = span.textContent === ">" ? "<" : ">";
-    });
-
-    stockLosersHeading.addEventListener("click", () => {
-        animateDiv("stock-losers-inner");
-        const span = stockLosersHeading.querySelector("span");
-        span.textContent = span.textContent === ">" ? "<" : ">";
-    });
-
-    recentViewedHeading.addEventListener("click", () => {
-        animateDiv("recent-viewed-inner");
-        const span = recentViewedHeading.querySelector("span");
-        span.textContent = span.textContent === ">" ? "<" : ">";
-    });
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
@@ -92,7 +71,7 @@ async function performSearch(symbol, marketName) {
         if (existingIndex !== -1) {
             recentViewed.splice(existingIndex, 1);
         }
-        recentViewed.unshift({ symbol });
+        recentViewed.unshift({ symbol, name: marketName });
         if (recentViewed.length > 7) {
             recentViewed.pop();
         }
@@ -140,8 +119,9 @@ async function updateStocks() {
     const stockLosers = document.getElementById("stock-losers");
 
     stockGainers.innerHTML =
-        '<h6 id="stock-gainers-heading">Stock Gainers <span>><span></h6>';
-    stockLosers.innerHTML = '<h6 id="stock-losers-heading">Stock Losers <span>><span></h6>';
+        '<h6 id="gainers-heading">Stock Gainers <span>><span></h6>';
+    stockLosers.innerHTML =
+        '<h6 id="losers-heading">Stock Losers <span>><span></h6>';
 
     const stockGainersInnerDiv = document.createElement("div");
     stockGainersInnerDiv.id = "stock-gainers-inner";
@@ -171,6 +151,9 @@ async function updateStocks() {
     losers.forEach((loser) => {
         createStockDiv(loser, stockLosersInnerDiv);
     });
+
+    addEventListenerToHeadings("gainers-heading", "stock-gainers-inner");
+    addEventListenerToHeadings("losers-heading", "stock-losers-inner");
 }
 
 function createStockDiv(stock, container) {
@@ -248,7 +231,7 @@ function filterAndDisplayMarkets(value, resultsDiv, markets) {
 async function updateRecentViewed() {
     const recentViewedDiv = document.getElementById("recent-viewed");
     recentViewedDiv.innerHTML =
-        '<h6 id="recent-viewed-heading">Recently Viewed <span>><span></h6>';
+        '<h6 id="viewed-heading">Recently Viewed <span>><span></h6>';
 
     const recentViewedInnerDiv = document.createElement("div");
     recentViewedInnerDiv.id = "recent-viewed-inner";
@@ -270,9 +253,12 @@ async function updateRecentViewed() {
             `${endpoint}/market/latest?symbol=${item.symbol}`
         );
 
+        console.log(market);
+
         createStockDiv(
             {
                 symbol: item.symbol,
+                name: item.name,
                 currentPrice: market.close,
                 valueChange: market.valueChange,
                 percentChange: market.percentChange,
@@ -280,6 +266,8 @@ async function updateRecentViewed() {
             recentViewedInnerDiv
         );
     }
+
+    addEventListenerToHeadings("viewed-heading", "recent-viewed-inner");
 }
 
 function animateDiv(divId) {
@@ -290,6 +278,16 @@ function animateDiv(divId) {
     } else {
         div.slideDown(500);
     }
+}
+
+function addEventListenerToHeadings(headingId, divId) {
+    const heading = document.getElementById(headingId);
+
+    heading.addEventListener("click", () => {
+        animateDiv(divId);
+        const span = heading.querySelector("span");
+        span.textContent = span.textContent === ">" ? "<" : ">";
+    });
 }
 
 document.addEventListener("DOMContentLoaded", init);

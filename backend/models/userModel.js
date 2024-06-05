@@ -8,14 +8,20 @@ export class User {
     _id;
     _name;
     _balance;
-    _stocks;
+    _transactions;
+    _currentStocks;
+    _staredStocks;
+    _favoriteStock;
 
     static from(user) {
         const newUser = new User();
         newUser._id = user.id;
         newUser._name = user.name;
         newUser._balance = user.balance;
-        newUser._stocks = user.stocks;
+        newUser._transactions = user.transactions;
+        newUser._currentStocks = user.currentStocks;
+        newUser._staredStocks = user.staredStocks;
+        newUser._favoriteStock = user.favoriteStock;
         return newUser;
     }
 
@@ -61,14 +67,21 @@ export class User {
     static buy(userId, symbol, quantity, price, timestamp) {
         const user = userController.getById(userId);
 
-        if (!user.stocks) {
-            user.stocks = [];
+        if (!user.transactions) {
+            user.transactions = [];
         }
 
-        user.stocks.push({ symbol, quantity, price, timestamp });
+        user.transactions.push({ symbol, quantity, price, timestamp });
         user.balance -= quantity * price + 75;
         userController.update(user);
 
+        return user;
+    }
+
+    static updateFavoriteStock(userId, favoriteStock) {
+        const user = userController.getById(userId);
+        user.favoriteStock = favoriteStock;
+        userController.update(user);
         return user;
     }
 
@@ -77,7 +90,10 @@ export class User {
             id: this._id,
             name: this._name,
             balance: this._balance,
-            stocks: this.stocks ? this.stocks : []
+            transactions: this.transactions ? this.transactions : [],
+            currentStocks: this._currentStocks ? this._currentStocks : [],
+            staredStocks: this._staredStocks ? this._staredStocks : [],
+            favoriteStock: this._favoriteStock
         };
     }
 
@@ -85,11 +101,11 @@ export class User {
         return this._name;
     }
 
-    get stocks() {
-        return this._stocks;
+    get transactions() {
+        return this._transactions;
     }
 
-    set stocks(value) {
-        this._stocks = value;
+    set transactions(value) {
+        this._transactions = value;
     }
 }
