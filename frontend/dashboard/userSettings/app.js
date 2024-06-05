@@ -88,8 +88,30 @@ async function fetchMarkets(fetchUrl) {
 }
 
 async function updateFavoriteMarkets(market) {
-    console.log(market);
     document.getElementById("favorite-market-search").value = `${market.name}`;
+
+    const response = await fetch(`${endpoint}/user/favoriteStock?stockSymbol=${market.symbol}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        }
+    });
+
+    if (response.ok) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        user.favoriteStock = market.symbol;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        const favoriteMarketResultsDiv = document.getElementById("favorite-market-results");
+        favoriteMarketResultsDiv.innerHTML = `<div><p class="result-item-favorite-market green">Favorite stock updated</p></div>`;
+
+        setTimeout(() => {
+            favoriteMarketResultsDiv.innerHTML = "";
+        }, 2000);
+    } else {
+        console.error(await response.text());
+    }
 }
 
 document.addEventListener("DOMContentLoaded", init);

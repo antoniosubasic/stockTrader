@@ -2,6 +2,14 @@
     text-align: center;
 }
 
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
 #favorite-market-search {
     width: 25rem;
 }
@@ -38,4 +46,15 @@
 
 .result-item-favorite-market:hover {
     background-color: #dee2e6;
+}
+
+#settings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+#favorite-market-section h4 {
+    text-align: center;
 }

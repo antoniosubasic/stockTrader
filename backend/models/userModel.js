@@ -80,9 +80,14 @@ export class User {
 
     static updateFavoriteStock(userId, favoriteStock) {
         const user = userController.getById(userId);
+
+        if (!user) {
+            return [null, [404, 'user not found']];
+        }
+
         user.favoriteStock = favoriteStock;
         userController.update(user);
-        return user;
+        return [User.from(user), [200, 'favorite stock updated']];
     }
 
     getData() {

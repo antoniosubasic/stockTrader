@@ -253,8 +253,6 @@ async function updateRecentViewed() {
             `${endpoint}/market/latest?symbol=${item.symbol}`
         );
 
-        console.log(market);
-
         createStockDiv(
             {
                 symbol: item.symbol,
