@@ -27,8 +27,8 @@ app.post("/user/signin", (req, res) => {
     }
 });
 
-app.post("/user/favoriteStock", (req, res) => {
-    const { stockSymbol } = req.query;
+app.post("/user/update/favoriteStock", (req, res) => {
+    const { stockSymbol } = req.body;
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!stockSymbol) {
@@ -38,21 +38,81 @@ app.post("/user/favoriteStock", (req, res) => {
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            
-            try {
-                const [user, [status, message]] = User.updateFavoriteStock(decoded.id, stockSymbol);
+            const [user, [status, message]] = User.updateFavoriteStock(
+                decoded.id,
+                stockSymbol
+            );
 
-                if (user) {
-                    const userData = user.getData();
-                    return res.status(status).json({ user: userData });
-                } else {
-                    return res.status(status).send(message);
-                }
+            if (user) {
+                const userData = user.getData();
+                return res.status(status).json({ user: userData });
+            } else {
+                return res.status(status).send(message);
             }
-            catch (error) {
-                return res.status(404).send("Something went wrong but the token is valid");
-            }
+        } catch (error) {
+            return res.status(401).send("invalid token");
+        }
+    } else {
+        return res.status(401).send("missing token");
+    }
+});
 
+app.post("user/update/password", (req, res) => {
+    const { password, newPassword } = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!password || !newPassword) {
+        return res.status(400).send("missing password or newPassword");
+    }
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const [user, [status, message]] = User.updatePassword( 
+                decoded.id,
+                password,
+                newPassword
+            );
+
+            if (user) {
+                const userData = user.getData();
+                return res.status(status).json({ user: userData });
+            } else {
+                return res.status(status).send(message);
+            }
+        } catch (error) {
+            return res.status(401).send("invalid token");
+        }
+    } else {
+        return res.status(401).send("missing token");
+    }
+});
+
+app.post("/user/update/username", (req, res) => {
+    const { password, newUsername } = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!password || !newUsername) {
+        return res.status(400).send("missing password or newUsername");
+    }
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const [user, [status, message]] = User.updateUsername( 
+                decoded.id,
+                password,
+                newUsername
+            );
+
+            if (user) {
+                const userData = user.getData();
+                return res.status(status).json({ user: userData });
+            } else {
+                return res.status(status).send(message);
+            }
         } catch (error) {
             return res.status(401).send("invalid token");
         }
@@ -68,9 +128,25 @@ app.post("/user/signup", (req, res) => {
 });
 
 app.post("/user/delete", (req, res) => {
-    const { username, password } = req.body;
-    const [status, message] = User.delete(username, password);
-    return res.status(status).send(message);
+    const { password } = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!password) {
+        return res.status(400).send("missing password");
+    }
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const [status, message] = User.delete(decoded.name, password);
+            return res.status(status).send(message);
+        } catch (error) {
+            return res.status(401).send("invalid token");
+        }
+    } else {
+        return res.status(401).send("missing token");
+    }
 });
 
 app.get("/user/auth", (req, res) => {

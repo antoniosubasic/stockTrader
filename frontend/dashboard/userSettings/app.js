@@ -90,12 +90,13 @@ async function fetchMarkets(fetchUrl) {
 async function updateFavoriteMarkets(market) {
     document.getElementById("favorite-market-search").value = `${market.name}`;
 
-    const response = await fetch(`${endpoint}/user/favoriteStock?stockSymbol=${market.symbol}`, {
+    const response = await fetch(`${endpoint}/user/update/favoriteStock`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        }
+        },
+        body: JSON.stringify({ stockSymbol: market.symbol }),
     });
 
     if (response.ok) {
