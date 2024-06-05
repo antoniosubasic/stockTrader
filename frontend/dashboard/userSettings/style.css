@@ -10,10 +10,6 @@
     color: red;
 }
 
-#favorite-market-search {
-    width: 25rem;
-}
-
 #favorite-market-searchBar {
     display: flex;
     justify-content: center;
@@ -22,7 +18,7 @@
 
 #favorite-market-results {
     position: absolute;
-    width: 25rem;
+    width: 15rem;
     z-index: 1;
     background-color: white;
 }
@@ -50,11 +46,12 @@
 
 #settings {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
+    justify-content: space-around;
+    align-items: start;
+    margin-top: 4rem;
 }
 
-#favorite-market-section h4 {
-    text-align: center;
+#settings input {
+    width: 15rem;
 }
+

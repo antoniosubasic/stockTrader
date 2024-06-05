@@ -1,5 +1,6 @@
 import cryptojs from 'crypto-js';
 import { Controller as UserController } from '../controllers/userController.js';
+import e from 'express';
 
 const userController = new UserController();
 const hash = (password) => cryptojs.SHA512(password).toString();
@@ -88,6 +89,34 @@ export class User {
         user.favoriteStock = favoriteStock;
         userController.update(user);
         return [User.from(user), [200, 'favorite stock updated']];
+    }
+
+    static updatePassword(id, password, newPassword) {
+        const user = userController.getById(id);
+
+        if (!user) {
+            return [null, [404, 'user not found']];
+        } else if (user.password !== hash(password)) {
+            return [null, [401, 'password is incorrect']];
+        } else { 
+            user.password = hash(newPassword);
+            userController.update(user);
+            return [User.from(user), [200, 'password updated']];
+        }
+    }
+
+    static updateUsername(id, password, newUsername) {
+        const user = userController.getById(id);
+
+        if (!user) {
+            return [null, [404, 'user not found']];
+        } else if (user.password !== hash(password)) {
+            return [null, [401, 'password is incorrect']];
+        } else {
+            user.name = newUsername;
+            userController.update(user);
+            return [User.from(user), [200, 'username updated']];
+        }
     }
 
     getData() {
