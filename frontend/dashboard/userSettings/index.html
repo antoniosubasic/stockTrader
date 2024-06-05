@@ -68,8 +68,36 @@
                     class="home-arrow"
             /></a>
         </button>
-        <main>
+        <article>
             <h1 id="heading">Settings</h1>
-        </main>
+
+            <section id="user-settings">
+                <h4>Change Favorite Market:</h4>
+
+                <div id="favorite-market-searchBar">
+                    <div>
+                        <form
+                            class="d-flex"
+                            role="search"
+                            id="favorite-market-form"
+                            autocomplete="off"
+                        >
+                            <input
+                                class="form-control me-2"
+                                type="search"
+                                placeholder="Search..."
+                                aria-label="Search"
+                                id="favorite-market-search"
+                                required
+                            />
+                            <button class="btn btn-primary" type="submit">
+                                Search
+                            </button>
+                        </form>
+                        <div id="favorite-market-results"></div>
+                    </div>
+                </div>
+            </section>
+        </article>
     </body>
 </html>
