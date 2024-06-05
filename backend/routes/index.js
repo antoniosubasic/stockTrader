@@ -28,23 +28,31 @@ app.post("/user/signin", (req, res) => {
 });
 
 app.post("/user/favoriteStock", (req, res) => {
-    const { favoriteStock } = req.body;
+    const { stockSymbol } = req.query;
     const token = req.headers.authorization?.split(" ")[1];
 
-    if (!favoriteStock) {
+    if (!stockSymbol) {
         return res.status(400).send("missing favoriteStock");
     }
 
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            
+            try {
+                const [user, [status, message]] = User.updateFavoriteStock(decoded.id, stockSymbol);
 
-            if (User.exists(decoded.id, decoded.name)) {
-                const user = User.setFavoriteStock(decoded.id, favoriteStock);
-                return res.status(200).json(user);
-            } else {
-                return res.status(404).send("user not found");
+                if (user) {
+                    const userData = user.getData();
+                    return res.status(status).json({ user: userData });
+                } else {
+                    return res.status(status).send(message);
+                }
             }
+            catch (error) {
+                return res.status(404).send("Something went wrong but the token is valid");
+            }
+
         } catch (error) {
             return res.status(401).send("invalid token");
         }
