@@ -39,7 +39,10 @@
 #tab {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+    margin-left: 15vw;
+    margin-right: 15vw;
+    margin-top: 5vh;
 }
 
 #tab > h1 {
@@ -73,10 +76,10 @@
     flex: 1;
 }
 
-.error {
+.red {
     color: red;
 }
 
-.success {
+.green {
     color: green;
 }
