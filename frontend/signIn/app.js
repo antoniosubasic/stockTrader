@@ -41,6 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p class="redirect-time"></p>
                     `;
 
+                    document.querySelector('#modal .modal-body .btn-close').addEventListener('click', () => {
+                        window.location.href = "../dashboard";
+                    });
+
                     const redirectTimeElement = document.querySelector(".modal-body .content .redirect-time");
                     let redirectTime = 4;
                     const redirectInterval = setInterval(() => {
