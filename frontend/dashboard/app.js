@@ -106,6 +106,7 @@ async function loadContent(display) {
                             placeholder="Quantity"
                             aria-label="Quantity"
                             id="quantity"
+                            min="1"
                             required
                         />
                         <button class="btn btn-primary" type="submit">Buy</button>
