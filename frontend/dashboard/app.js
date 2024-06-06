@@ -41,37 +41,41 @@ async function loadContent(display) {
     switch (display) {
         case "stocks":
             tabContent.innerHTML = `
-                <table class="table table-striped w-50">
-                    <thead>
-                        <tr>
-                            <th scope="col">Symbol</th>
-                            <th scope="col">Average Price</th>
-                            <th scope="col">Quantity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${user.currentStocks.map(stock => `<tr><th scope="row">${stock.symbol}</th><td>${formatCurrency(stock.averagePrice)}</td><td>${stock.quantity}</td></tr>`).join('')}
-                    </tbody>
-                </table>
+                ${user.currentStocks.length > 0 ? `
+                    <table class="table table-striped w-50">
+                        <thead>
+                            <tr>
+                                <th scope="col">Symbol</th>
+                                <th scope="col">Average Price</th>
+                                <th scope="col">Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${user.currentStocks.map(stock => `<tr><th scope="row">${stock.symbol}</th><td>${formatCurrency(stock.averagePrice)}</td><td>${stock.quantity}</td></tr>`).join('')}
+                        </tbody>
+                    </table>
+                ` : '<p class="red">You don\'t own any stocks</p>'}
             `;
             break;
 
         case "transactions":
             tabContent.innerHTML = `
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Symbol</th>
-                            <th>Transaction Type</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Timestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${user.transactions.map(stock => `<tr><th scope="row">${stock.symbol}</th><td class="green">${stock.type}</td><td>${formatCurrency(stock.price)}</td><td>${stock.quantity}</td><td>${formatTimestamp(stock.timestamp, true)}</td></tr>`).join('')}
-                    </tbody>
-                </table>
+                ${user.transactions.length > 0 ? `
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Transaction Type</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${user.transactions.reverse().map(stock => `<tr><th scope="row">${stock.symbol}</th><td><p class="${stock.type === "BUY" ? 'green' : 'red'}">${stock.type}</p></td><td>${formatCurrency(stock.price)}</td><td>${stock.quantity}</td><td>${formatTimestamp(stock.timestamp, true)}</td></tr>`).join('')}
+                        </tbody>
+                    </table>
+                ` : '<p class="red">You don\'t have any transactions</p>'}
             `;
             break;
 
@@ -119,8 +123,27 @@ async function loadContent(display) {
 
         case "sell-stocks":
             tabContent.innerHTML = `
-                <div></div>
+                ${user.currentStocks.length > 0 ? `
+                    <table class="table table-striped w-50 sell-stocks-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Average Price</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${user.currentStocks.map(stock => `<tr data-symbol="${stock.symbol}"><th scope="row">${stock.symbol}</th><td>${formatCurrency(stock.averagePrice)}</td><td><input type="number" min="1" max="${stock.quantity}"> / ${stock.quantity}</td></tr>`).join('')}
+                        </tbody>
+                    </table>
+                    <div>
+                        <button class="btn btn-primary" id="sell-button">Sell</button>
+                    </div>
+                ` : '<p class="red">You don\'t own any stocks</p>'}
             `;
+            if (user.currentStocks.length > 0) {
+                await initSellStocksHandler();
+            }
             break;
     }
 }
@@ -224,6 +247,58 @@ async function initBuyFormHandler() {
                     modalBody.innerHTML = `<p class="red">${await response.text()}</p>`;
                     modal.show();
                 }
+            }
+        }
+    });
+}
+
+async function initSellStocksHandler() {
+    const modal = new bootstrap.Modal(document.getElementById('modal'));
+    const modalBody = document.querySelector('#modal div.content');
+
+    document.getElementById("sell-button").addEventListener("click", async () => {
+        const table = document.querySelector(".sell-stocks-table");
+        const rows = table.querySelectorAll(".sell-stocks-table tbody tr");
+
+        const sellData = [];
+        let error = false;
+
+        rows.forEach(row => {
+            const input = row.querySelector("input");
+            const quantity = input.value ? parseInt(input.value) : 0;
+            const max = parseInt(input.getAttribute("max"));
+
+            if (quantity > 0 && quantity <= max) {
+                sellData.push({ symbol: row.getAttribute("data-symbol"), quantity });
+            } else if (quantity > max) {
+                error = true;
+                input.classList.add("red");
+            }
+        });
+
+        if (error) {
+            modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
+            modal.show();
+            return;
+        }
+
+        if (sellData.length > 0) {
+            const response = await fetch(`${endpoint}/market/sell`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+                },
+                body: JSON.stringify(sellData),
+            });
+
+            if (response.ok) {
+                const json = await response.json();
+                localStorage.setItem("user", JSON.stringify(json));
+                window.location.reload();
+            } else {
+                modalBody.innerHTML = `<p class="red">${await response.text()}</p>`;
+                modal.show();
             }
         }
     });

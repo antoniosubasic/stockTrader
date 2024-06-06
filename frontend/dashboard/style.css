@@ -83,3 +83,26 @@
 .green {
     color: green;
 }
+
+.table tbody td p {
+    margin: 0;
+}
+
+.sell-stocks-table tbody input {
+    text-align: right;
+    border: 1px solid #ced4da;
+    outline: none;
+    border-radius: 0.25rem;
+    width: 4rem;
+    padding-right: 0.25rem;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#sell-button {
+    width: 5rem;
+}
