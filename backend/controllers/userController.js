@@ -1,6 +1,6 @@
-import fs from 'fs';
+import fs from "fs";
 
-const file = './data/users.json';
+const file = "./data/users.json";
 
 export class Controller {
     _users = null;
@@ -14,11 +14,11 @@ export class Controller {
     }
 
     getByName(name) {
-        return this._users.find(user => user.name === name);
+        return this._users.find((user) => user.name === name);
     }
 
     getById(id) {
-        return this._users.find(user => user.id === id);
+        return this._users.find((user) => user.id === id);
     }
 
     create(name, password) {
@@ -33,13 +33,13 @@ export class Controller {
         this.save();
     }
 
-    delete(name) {
-        this._users = this._users.filter(user => user.name !== name);
+    delete(id) {
+        this._users = this._users.filter((user) => user.id !== id);
         this.save();
     }
 
     update(user) {
-        this._users = this._users.map(u => u.id === user.id ? user : u);
+        this._users = this._users.map((u) => (u.id === user.id ? user : u));
         this.save();
     }
 

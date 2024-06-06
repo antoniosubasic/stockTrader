@@ -36,7 +36,7 @@ async function init() {
     }`;
 
     userDiv.innerHTML = `
-    <p class="name">Hello, ${user.name}</p>
+    <p class="name">Hello, ${user.name.toFixed(2)}</p>
     <p><b>Balance:</b> $${user.balance}</p>
     <p><b>Favorite Market:</b> ${
         markets.find((m) => m.symbol === user.favoriteStock).name
