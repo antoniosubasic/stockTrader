@@ -31,16 +31,14 @@ async function init() {
 
     const userDiv = document.getElementById("userDiv");
     const user = JSON.parse(localStorage.getItem("user"));
-    favoriteMarketSearchInput.value = `${
-        markets.find((m) => m.symbol === user.favoriteStock).name
-    }`;
+    favoriteMarketSearchInput.value = `${markets.find((m) => m.symbol === user.favoriteStock).name
+        }`;
 
     userDiv.innerHTML = `
-    <p class="name">Hello, ${user.name.toFixed(2)}</p>
+    <p class="name">Hello, ${user.name}</p>
     <p><b>Balance:</b> $${user.balance}</p>
-    <p><b>Favorite Market:</b> ${
-        markets.find((m) => m.symbol === user.favoriteStock).name
-    } (${user.favoriteStock})</p>
+    <p><b>Favorite Market:</b> ${markets.find((m) => m.symbol === user.favoriteStock).name
+        } (${user.favoriteStock})</p>
     `;
 
     logOut.addEventListener("click", () => {
@@ -160,6 +158,13 @@ async function updateFavoriteMarkets(market) {
             <p class="redirect-time"></p>
             `;
 
+            document.querySelector('#modal .modal-body .btn-close').addEventListener('click', () => {
+                const user = JSON.parse(localStorage.getItem("user"));
+                user.favoriteStock = market.symbol;
+                localStorage.setItem("user", JSON.stringify(user));
+                window.location.reload();
+            });
+
             const redirectTimeElement = document.querySelector(
                 ".modal-body .content .redirect-time"
             );
@@ -263,7 +268,7 @@ async function handleUpdatePassword(updatePasswordForm) {
             updatePasswordForm.currentPasswordNewPassword.value =
                 updatePasswordForm.newPassword.value =
                 updatePasswordForm.confirmNewPassword.value =
-                    "";
+                "";
             responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
         }
     }
@@ -326,7 +331,7 @@ async function handleUpdateUsername(updateUsernameForm) {
             updateUsernameForm.currentPasswordUsername.value =
                 updateUsernameForm.newUsername.value =
                 updateUsernameForm.confirmNewUsername.value =
-                    "";
+                "";
             responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
         }
     }
