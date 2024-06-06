@@ -57,8 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="redirect-time"></p>
                 `;
 
-                console.log('animate');
-
                 const redirectTimeElement = document.querySelector(".modal-body .content .redirect-time");
                 let redirectTime = 4;
                 const redirectInterval = setInterval(() => {

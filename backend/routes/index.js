@@ -57,7 +57,7 @@ app.post("/user/update/favoriteStock", (req, res) => {
     }
 });
 
-app.post("user/update/password", (req, res) => {
+app.post("/user/update/password", (req, res) => {
     const { password, newPassword } = req.body;
     const token = req.headers.authorization?.split(" ")[1];
 
