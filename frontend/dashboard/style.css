@@ -40,9 +40,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: 15vw;
-    margin-right: 15vw;
-    margin-top: 5vh;
+    margin: 5vh 15vw;
 }
 
 #tab > h1 {
