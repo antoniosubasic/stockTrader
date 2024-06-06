@@ -139,7 +139,7 @@ app.post("/user/delete", (req, res) => {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            const [status, message] = User.delete(decoded.name, password);
+            const [status, message] = User.delete(decoded.id, password);
             return res.status(status).send(message);
         } catch (error) {
             return res.status(401).send("invalid token");
@@ -205,6 +205,10 @@ app.post("/market/buy", async (req, res) => {
     const { symbol, quantity } = req.query;
     const token = req.headers.authorization?.split(" ")[1];
 
+    if (!symbol || !quantity) {
+        return res.status(400).send("missing symbol or quantity query parameter");
+    }
+
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -216,20 +220,77 @@ app.post("/market/buy", async (req, res) => {
                 if (status === 200) {
                     const latest =
                         data.stockPrices[data.stockPrices.length - 1];
-                    const user = User.buy(
+                    
+                    const [user, [status, message]] = User.buy(
                         decoded.id,
                         symbol,
                         parseInt(quantity),
                         latest.close,
                         latest.timestamp
                     );
-                    return res.status(200).json(user);
+
+                    if (user) {
+                        const userData = user.getData();
+                        return res.status(status).json(userData);
+                    } else {
+                        return res.status(status).send(message);
+                    }
                 } else {
                     return res.status(status).send(message);
                 }
             } else {
                 return res.status(404).send("user not found");
             }
+        } catch (error) {
+            return res.status(401).send("invalid token");
+        }
+    } else {
+        return res.status(401).send("missing token");
+    }
+});
+
+app.post("/market/sell", async (req, res) => {
+    const { symbol, quantity } = req.query;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!symbol || !quantity) {
+        return res.status(400).send("missing symbol or quantity query parameter");
+    }
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            if (User.exists(decoded.id, decoded.name)) {
+                const market = new Market(symbol);
+                const [data, [status, message]] = await market.get();
+
+                if (status === 200) {
+                    const latest =
+                        data.stockPrices[data.stockPrices.length - 1];
+                    
+                    const [user, [status, message]] = User.sell(
+                        decoded.id,
+                        symbol,
+                        parseInt(quantity),
+                        latest.close,
+                        latest.timestamp
+                    );
+
+                    if (user) {
+                        const userData = user.getData();
+                        return res.status(status).json(userData);
+                    } else {
+                        return res.status(status).send(message);
+                    }
+                } else {
+                    return res.status(status).send(message);
+                }
+            } else {
+                return res.status(404).send("user not found");
+            }
+            
+
         } catch (error) {
             return res.status(401).send("invalid token");
         }

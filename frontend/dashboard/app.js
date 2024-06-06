@@ -38,14 +38,18 @@ async function loadContent(display) {
         case "stocks":
             tabContent.innerHTML = `
                 <ul>
-                    ${user.transactions.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
+                    ${user.currentStocks.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.averagePrice)}  x  ${stock.quantity}</li>`).join('')}
                 </ul>
             `;
             break;
 
         case "transactions":
             tabContent.innerHTML = `
-                <div></div>
+                <div>
+                     <ul>
+                        ${user.transactions.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
+                    </ul>
+                </div>
             `;
             break;
 
@@ -88,7 +92,7 @@ async function loadContent(display) {
                 </div>
             `;
             await initSearchBarHandler();
-            initBuyFormHandler();
+            await initBuyFormHandler();
             break;
 
         case "sell-stocks":
@@ -169,7 +173,7 @@ async function fetchMarkets(fetchUrl) {
     }
 }
 
-function initBuyFormHandler() {
+async function initBuyFormHandler() {
     document.getElementById("buy-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const quantity = parseInt(document.getElementById("quantity").value);
@@ -187,11 +191,11 @@ function initBuyFormHandler() {
                 });
 
                 if (response.ok) {
-                    const { password, ...json } = await response.json();
+                    const json = await response.json();
                     localStorage.setItem("user", JSON.stringify(json));
                     window.location.reload();
                 } else {
-                    alert(response.statusText);
+                    alert(await response.text());
                 }
             }
         }
@@ -206,7 +210,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const user = JSON.parse(localStorage.getItem("user"));
 
-    document.getElementById("share-in-stocks-value").innerText = formatCurrency(user.transactions ? user.transactions.reduce((sum, stock) => sum + (stock.quantity * stock.price), 0) : 0);
+    document.getElementById("share-in-stocks-value").innerText = formatCurrency(user.transactions ? user.currentStocks.reduce((sum, stock) => sum + (stock.quantity * stock.averagePrice), 0) : 0);
     document.getElementById("balance-value").innerText = formatCurrency(user.balance);
 
     const params = new URLSearchParams(window.location.search);
