@@ -265,6 +265,8 @@ app.post("/market/sell", async (req, res) => {
     }
 
     if (sellData) {
+        let userData;
+
         for (const data of sellData) {
             const { symbol, quantity } = data;
 
@@ -289,8 +291,7 @@ app.post("/market/sell", async (req, res) => {
                     );
 
                     if (user) {
-                        const userData = user.getData();
-                        return res.status(status).json(userData);
+                        userData = user.getData();
                     } else {
                         return res.status(status).send(message);
                     }
@@ -301,6 +302,8 @@ app.post("/market/sell", async (req, res) => {
                 return res.status(404).send("user not found");
             }
         }
+
+        return res.status(200).json(userData);
     }
 });
 
