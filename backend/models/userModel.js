@@ -82,7 +82,7 @@ export class User {
         if (user.balance < quantity * price + 25) {
             return [null, [403, "insufficient balance"]];
         }
-        user.transactions.push({ symbol, quantity, price, timestamp, type: "BUY"});
+        user.transactions.push({ symbol, quantity, price, timestamp, type: "BUY" });
 
         const stock = user.currentStocks.find((s) => s.symbol === symbol);
         if (stock) {
@@ -117,7 +117,7 @@ export class User {
             return [null, [400, "insufficient stocks"]];
         }
 
-        user.transactions.push({ symbol, quantity, price, timestamp, type: "SELL"});
+        user.transactions.push({ symbol, quantity, price, timestamp, type: "SELL" });
         stock.quantity -= quantity;
         user.balance += quantity * price - 25;
         
@@ -126,6 +126,8 @@ export class User {
         }
 
         userController.update(user);
+
+        return [User.from(user), [200, "stock sold"]];
     }
 
     static updateFavoriteStock(userId, favoriteStock) {
