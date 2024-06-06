@@ -174,12 +174,16 @@ async function fetchMarkets(fetchUrl) {
 }
 
 async function initBuyFormHandler() {
+    const modal = new bootstrap.Modal(document.getElementById('modal'));
+    const modalBody = document.querySelector('#modal div.content');
+
     document.getElementById("buy-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const quantity = parseInt(document.getElementById("quantity").value);
 
         if (!quantity || quantity <= 0) {
-            alert("Invalid quantity");
+            modalBody.innerHTML = `<p class="error">Invalid quantity</p>`;
+            modal.show();
         } else {
             if (marketSymbol) {
                 const response = await fetch(`${endpoint}/market/buy?symbol=${marketSymbol}&quantity=${quantity}`, {
@@ -195,7 +199,8 @@ async function initBuyFormHandler() {
                     localStorage.setItem("user", JSON.stringify(json));
                     window.location.reload();
                 } else {
-                    alert(await response.text());
+                    modalBody.innerHTML = `<p class="error">${await response.text()}</p>`;
+                    modal.show();
                 }
             }
         }

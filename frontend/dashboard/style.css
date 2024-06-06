@@ -56,3 +56,27 @@
 #buy-form {
     width: 25rem;
 }
+
+#modal .modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+#modal .modal-body p {
+    text-align: center;
+    margin: 0;
+}
+
+#modal .modal-body .content {
+    flex: 1;
+}
+
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}
