@@ -7,9 +7,13 @@ function formatCurrency(value) {
     return value.toLocaleString('de-AT', { style: 'currency', currency: 'USD' });
 }
 
-function formatTimestamp(timestamp) {
+function formatTimestamp(timestamp, containsSeconds = false) {
     const date = new Date(timestamp);
-    return date.toLocaleDateString('de-AT', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+    if (containsSeconds) {
+        options.second = '2-digit';
+    }
+    return date.toLocaleDateString('de-AT', options);
 }
 
 function initTabSelectionHandler() {
@@ -37,25 +41,42 @@ async function loadContent(display) {
     switch (display) {
         case "stocks":
             tabContent.innerHTML = `
-                <ul>
-                    ${user.currentStocks.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.averagePrice)}  x  ${stock.quantity}</li>`).join('')}
-                </ul>
+                <table class="table table-striped w-50">
+                    <thead>
+                        <tr>
+                            <th scope="col">Symbol</th>
+                            <th scope="col">Average Price</th>
+                            <th scope="col">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${user.currentStocks.map(stock => `<tr><th scope="row">${stock.symbol}</th><td>${formatCurrency(stock.averagePrice)}</td><td>${stock.quantity}</td></tr>`).join('')}
+                    </tbody>
+                </table>
             `;
             break;
 
         case "transactions":
             tabContent.innerHTML = `
-                <div>
-                     <ul>
-                        ${user.transactions.map(stock => `<li>${stock.symbol}  -->  ${formatCurrency(stock.price)}  x  ${stock.quantity}  -->  ${formatTimestamp(stock.timestamp)}</li>`).join('')}
-                    </ul>
-                </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Transaction Type</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${user.transactions.map(stock => `<tr><th scope="row">${stock.symbol}</th><td class="green">${stock.type}</td><td>${formatCurrency(stock.price)}</td><td>${stock.quantity}</td><td>${formatTimestamp(stock.timestamp, true)}</td></tr>`).join('')}
+                    </tbody>
+                </table>
             `;
             break;
 
         case "buy-stocks":
             tabContent.innerHTML = `
-                <h1>BUY STOCKS</h1>
                 <div id="searchBar">
                     <div>
                         <form
@@ -182,7 +203,7 @@ async function initBuyFormHandler() {
         const quantity = parseInt(document.getElementById("quantity").value);
 
         if (!quantity || quantity <= 0) {
-            modalBody.innerHTML = `<p class="error">Invalid quantity</p>`;
+            modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
             modal.show();
         } else {
             if (marketSymbol) {
@@ -199,7 +220,7 @@ async function initBuyFormHandler() {
                     localStorage.setItem("user", JSON.stringify(json));
                     window.location.reload();
                 } else {
-                    modalBody.innerHTML = `<p class="error">${await response.text()}</p>`;
+                    modalBody.innerHTML = `<p class="red">${await response.text()}</p>`;
                     modal.show();
                 }
             }
