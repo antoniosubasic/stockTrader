@@ -226,7 +226,7 @@ app.post("/market/buy", async (req, res) => {
                         symbol,
                         parseInt(quantity),
                         latest.close,
-                        latest.timestamp
+                        new Date()
                     );
 
                     if (user) {
@@ -274,7 +274,7 @@ app.post("/market/sell", async (req, res) => {
                         symbol,
                         parseInt(quantity),
                         latest.close,
-                        latest.timestamp
+                        new Date()
                     );
 
                     if (user) {
