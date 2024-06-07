@@ -37,7 +37,7 @@ export class Market {
         const [responseCode, responseMessage] =
             await marketController.fetchStockPrices(this._symbol);
 
-            return responseCode !== 200 && responseCode !== 304
+        return responseCode !== 200 && responseCode !== 304
             ? [null, [responseCode, responseMessage]]
             : [
                   marketController.getLatestData(this._symbol),
