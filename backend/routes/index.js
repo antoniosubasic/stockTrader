@@ -186,7 +186,7 @@ app.get("/market", async (req, res) => {
         : res.status(status).send(message);
 });
 
-app.get("/market/latest", (req, res) => {
+app.get("/market/latest", async (req, res) => {
     const { symbol } = req.query;
 
     if (!symbol) {
@@ -194,7 +194,7 @@ app.get("/market/latest", (req, res) => {
     }
 
     const market = new Market(symbol);
-    const [data, [status, message]] = market.getLatestData();
+    const [data, [status, message]] = await market.getLatestData();
 
     return status === 200
         ? res.status(status).json(data)

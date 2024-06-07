@@ -2,37 +2,53 @@ import auth from "../assets/scripts/auth.js";
 import endpoint from "../assets/scripts/config.js";
 
 let marketSymbol;
+let markets;
+let modal;
+let modalBody;
 
 function formatCurrency(value) {
-    return value.toLocaleString('de-AT', { style: 'currency', currency: 'USD' });
+    return value.toLocaleString("de-AT", {
+        style: "currency",
+        currency: "USD",
+    });
 }
 
 function formatTimestamp(timestamp, containsSeconds = false) {
     const date = new Date(timestamp);
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+    const options = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+    };
     if (containsSeconds) {
-        options.second = '2-digit';
+        options.second = "2-digit";
     }
-    return date.toLocaleDateString('de-AT', options);
+    return date.toLocaleDateString("de-AT", options);
 }
 
 function initTabSelectionHandler() {
     const buttons = document.querySelectorAll("#tab-selection button");
     let params = new URLSearchParams(window.location.search);
 
-    buttons.forEach(button => {
+    buttons.forEach((button) => {
         button.addEventListener("click", async () => {
-            buttons.forEach(b => b.classList.remove("active"));
+            buttons.forEach((b) => b.classList.remove("active"));
             button.classList.add("active");
             const display = button.getAttribute("data-display");
 
             params.set("display", display);
-            window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
+            window.history.replaceState(
+                {},
+                "",
+                `${window.location.pathname}?${params}`
+            );
 
             await loadContent(display);
         });
     });
-};
+}
 
 async function loadContent(display) {
     const tabContent = document.getElementById("tab");
@@ -40,27 +56,14 @@ async function loadContent(display) {
 
     switch (display) {
         case "stocks":
-            tabContent.innerHTML = `
-                ${user.currentStocks.length > 0 ? `
-                    <table class="table table-striped w-50">
-                        <thead>
-                            <tr>
-                                <th scope="col">Symbol</th>
-                                <th scope="col">Average Price</th>
-                                <th scope="col">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${user.currentStocks.map(stock => `<tr><th scope="row">${stock.symbol}</th><td>${formatCurrency(stock.averagePrice)}</td><td>${stock.quantity}</td></tr>`).join('')}
-                        </tbody>
-                    </table>
-                ` : '<p class="red">You don\'t own any stocks</p>'}
-            `;
+            await loadStocks(tabContent, user);
             break;
 
         case "transactions":
             tabContent.innerHTML = `
-                ${user.transactions.length > 0 ? `
+                ${
+                    user.transactions.length > 0
+                        ? `
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -72,10 +75,33 @@ async function loadContent(display) {
                             </tr>
                         </thead>
                         <tbody>
-                            ${user.transactions.reverse().map(stock => `<tr><th scope="row">${stock.symbol}</th><td><p class="${stock.type === "BUY" ? 'green' : 'red'}">${stock.type}</p></td><td>${formatCurrency(stock.price)}</td><td>${stock.quantity}</td><td>${formatTimestamp(stock.timestamp, true)}</td></tr>`).join('')}
+                            ${user.transactions
+                                .reverse()
+                                .map(
+                                    (stock) =>
+                                        `<tr><th scope="row">${
+                                            stock.symbol
+                                        }</th><td><p class="${
+                                            stock.type === "BUY"
+                                                ? "green"
+                                                : "red"
+                                        }">${
+                                            stock.type
+                                        }</p></td><td>${formatCurrency(
+                                            stock.price
+                                        )}</td><td>${
+                                            stock.quantity
+                                        }</td><td>${formatTimestamp(
+                                            stock.timestamp,
+                                            true
+                                        )}</td></tr>`
+                                )
+                                .join("")}
                         </tbody>
                     </table>
-                ` : '<p class="red">You don\'t have any transactions</p>'}
+                `
+                        : '<p class="red">You don\'t have any transactions</p>'
+                }
             `;
             break;
 
@@ -123,7 +149,9 @@ async function loadContent(display) {
 
         case "sell-stocks":
             tabContent.innerHTML = `
-                ${user.currentStocks.length > 0 ? `
+                ${
+                    user.currentStocks.length > 0
+                        ? `
                     <table class="table table-striped w-50 sell-stocks-table">
                         <thead>
                             <tr>
@@ -133,13 +161,28 @@ async function loadContent(display) {
                             </tr>
                         </thead>
                         <tbody>
-                            ${user.currentStocks.map(stock => `<tr data-symbol="${stock.symbol}"><th scope="row">${stock.symbol}</th><td>${formatCurrency(stock.averagePrice)}</td><td><input type="number" min="1" max="${stock.quantity}"> / ${stock.quantity}</td></tr>`).join('')}
+                            ${user.currentStocks
+                                .map(
+                                    (stock) =>
+                                        `<tr data-symbol="${
+                                            stock.symbol
+                                        }"><th scope="row">${
+                                            stock.symbol
+                                        }</th><td>${formatCurrency(
+                                            stock.averagePrice
+                                        )}</td><td><input type="number" min="1" max="${
+                                            stock.quantity
+                                        }"> / ${stock.quantity}</td></tr>`
+                                )
+                                .join("")}
                         </tbody>
                     </table>
                     <div>
                         <button class="btn btn-primary" id="sell-button">Sell</button>
                     </div>
-                ` : '<p class="red">You don\'t own any stocks</p>'}
+                `
+                        : '<p class="red">You don\'t own any stocks</p>'
+                }
             `;
             if (user.currentStocks.length > 0) {
                 await initSellStocksHandler();
@@ -152,8 +195,6 @@ async function initSearchBarHandler() {
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search");
     const resultsDiv = document.getElementById("results");
-
-    const markets = await fetchMarkets(`${endpoint}/markets`);
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
@@ -219,24 +260,85 @@ async function fetchMarkets(fetchUrl) {
 }
 
 async function initBuyFormHandler() {
-    const modal = new bootstrap.Modal(document.getElementById('modal'));
-    const modalBody = document.querySelector('#modal div.content');
+    document
+        .getElementById("buy-form")
+        .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const quantity = parseInt(
+                document.getElementById("quantity").value
+            );
 
-    document.getElementById("buy-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const quantity = parseInt(document.getElementById("quantity").value);
+            if (!quantity || quantity <= 0) {
+                modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
+                modal.show();
+            } else {
+                if (marketSymbol) {
+                    const response = await fetch(
+                        `${endpoint}/market/buy?symbol=${marketSymbol}&quantity=${quantity}`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${localStorage.getItem(
+                                    "jwt"
+                                )}`,
+                            },
+                        }
+                    );
 
-        if (!quantity || quantity <= 0) {
-            modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
-            modal.show();
-        } else {
-            if (marketSymbol) {
-                const response = await fetch(`${endpoint}/market/buy?symbol=${marketSymbol}&quantity=${quantity}`, {
+                    if (response.ok) {
+                        const json = await response.json();
+                        localStorage.setItem("user", JSON.stringify(json));
+                        window.location.reload();
+                    } else {
+                        modalBody.innerHTML = `<p class="red">${await response.text()}</p>`;
+                        modal.show();
+                    }
+                }
+            }
+        });
+}
+
+async function initSellStocksHandler() {
+    document
+        .getElementById("sell-button")
+        .addEventListener("click", async () => {
+            const table = document.querySelector(".sell-stocks-table");
+            const rows = table.querySelectorAll(".sell-stocks-table tbody tr");
+
+            const sellData = [];
+            let error = false;
+
+            rows.forEach((row) => {
+                const input = row.querySelector("input");
+                const quantity = input.value ? parseInt(input.value) : 0;
+                const max = parseInt(input.getAttribute("max"));
+
+                if (quantity > 0 && quantity <= max) {
+                    sellData.push({
+                        symbol: row.getAttribute("data-symbol"),
+                        quantity,
+                    });
+                } else if (quantity > max) {
+                    error = true;
+                    input.classList.add("red");
+                }
+            });
+
+            if (error) {
+                modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
+                modal.show();
+                return;
+            }
+
+            if (sellData.length > 0) {
+                const response = await fetch(`${endpoint}/market/sell`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${localStorage.getItem("jwt")}`,
                     },
+                    body: JSON.stringify(sellData),
                 });
 
                 if (response.ok) {
@@ -248,79 +350,143 @@ async function initBuyFormHandler() {
                     modal.show();
                 }
             }
-        }
-    });
+        });
 }
 
-async function initSellStocksHandler() {
-    const modal = new bootstrap.Modal(document.getElementById('modal'));
-    const modalBody = document.querySelector('#modal div.content');
+async function loadStocks(tabContent, user) {
+    modalBody.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Please note that having a lot of stocks may take a while to load</p>`;
+    modal.show();
 
-    document.getElementById("sell-button").addEventListener("click", async () => {
-        const table = document.querySelector(".sell-stocks-table");
-        const rows = table.querySelectorAll(".sell-stocks-table tbody tr");
+    if (user.currentStocks.length <= 0) {
+        tabContent.innerHTML = "";
+        tabContent.innerHTML += `<p class="red">You don\'t own any stocks</p>`;
+        modal.hide();
+        return;
+    }
 
-        const sellData = [];
-        let error = false;
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const tbody = document.createElement("tbody");
 
-        rows.forEach(row => {
-            const input = row.querySelector("input");
-            const quantity = input.value ? parseInt(input.value) : 0;
-            const max = parseInt(input.getAttribute("max"));
+    table.classList.add("table", "table-striped", "buy-stocks-table");
 
-            if (quantity > 0 && quantity <= max) {
-                sellData.push({ symbol: row.getAttribute("data-symbol"), quantity });
-            } else if (quantity > max) {
-                error = true;
-                input.classList.add("red");
-            }
-        });
+    thead.innerHTML = `
+        <tr>
+            <th scope="col">Market</th>
+            <th scope="col">Purchase Price</th>
+            <th scope="col">Current Price</th>
+            <th scope="col">Yesterday's Change</th>
+            <th scope="col">Development</th>
+            <th scope="col">Quantity</th>
+        </tr>
+        `;
 
-        if (error) {
-            modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
-            modal.show();
-            return;
-        }
+    for (const stock of user.currentStocks) {
+        await generateStockTable(stock, tbody);
+    }
 
-        if (sellData.length > 0) {
-            const response = await fetch(`${endpoint}/market/sell`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-                },
-                body: JSON.stringify(sellData),
-            });
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tabContent.innerHTML = "";
+    tabContent.appendChild(table);
 
-            if (response.ok) {
-                const json = await response.json();
-                localStorage.setItem("user", JSON.stringify(json));
-                window.location.reload();
-            } else {
-                modalBody.innerHTML = `<p class="red">${await response.text()}</p>`;
-                modal.show();
-            }
-        }
-    });
+    modal.hide();
+}
+
+async function generateStockTable(stock, tbody) {
+    const response = await fetch(
+        `${endpoint}/market/latest?symbol=${stock.symbol}`
+    );
+
+    if (response.status === 429) {
+        modalBody.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Please have patience, too many requests have been made</p>`;
+
+        setTimeout(() => {
+            generateStockTable(stock, tbody);
+        }, 60_000); // 1 minute
+
+        return;
+    } else if (!response.ok) {
+        console.error(await response.text());
+        return;
+    }
+
+    const market = await response.json();
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+        <th scope="row"><span>${
+            markets.find((m) => m.symbol === stock.symbol).name
+        }</span><br><span>(${stock.symbol})</span></th>
+        <td>${formatCurrency(stock.averagePrice)}</td>
+        <td>${formatCurrency(market.close)}</td>
+        <td><span class="${market.valueChange > 0 ? "green" : "red"}"
+        >${market.percentChange > 0 ? "+" : ""}${market.valueChange.toFixed(
+        2
+    )}</span><br><span class="${market.percentChange > 0 ? "green" : "red"}"
+        >${market.percentChange > 0 ? "+" : ""}${market.percentChange.toFixed(
+        2
+    )}%</span></td>
+    <td>${
+        market.close > stock.averagePrice
+            ? `<p class="green">+${(
+                  ((market.close - stock.averagePrice) * 100 * stock.quantity) /
+                  stock.averagePrice
+              ).toFixed(2)}%</p>`
+            : market.close === stock.averagePrice
+            ? `<p>0.00%</p>`
+            : `<p class="red">${(
+                  ((market.close - stock.averagePrice) * 100 * stock.quantity) /
+                  stock.averagePrice
+              ).toFixed(2)}%</p>`
+    }</td>
+        <td><span>${formatCurrency(
+            stock.quantity * market.close
+        )}</span><br><span>${stock.quantity} stocks</span></td>
+    `;
+
+    tbody.appendChild(tr);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    if (!await auth()) {
+    if (!(await auth())) {
         window.location.href = "../signIn";
         return;
     }
 
     const user = JSON.parse(localStorage.getItem("user"));
+    markets = await fetchMarkets(`${endpoint}/markets`);
+    modal = new bootstrap.Modal(document.getElementById("modal"));
+    modalBody = document.querySelector("#modal div.content");
 
-    document.getElementById("share-in-stocks-value").innerText = formatCurrency(user.transactions ? user.currentStocks.reduce((sum, stock) => sum + (stock.quantity * stock.averagePrice), 0) : 0);
-    document.getElementById("balance-value").innerText = formatCurrency(user.balance);
+    document.getElementById("share-in-stocks-value").innerText = formatCurrency(
+        user.transactions
+            ? user.currentStocks.reduce(
+                  (sum, stock) => sum + stock.quantity * stock.averagePrice,
+                  0
+              )
+            : 0
+    );
+    document.getElementById("balance-value").innerText = formatCurrency(
+        user.balance
+    );
 
     const params = new URLSearchParams(window.location.search);
     const display = params.get("display");
 
     if (display) {
         const buttons = document.querySelectorAll("#tab-selection button");
-        const button = [...buttons].find(b => b.getAttribute("data-display") === display);
+        const button = [...buttons].find(
+            (b) => b.getAttribute("data-display") === display
+        );
         button.classList.add("active");
         await loadContent(display);
     }

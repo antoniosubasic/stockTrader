@@ -27,17 +27,22 @@ export class Market {
               ];
     }
 
-    getLatestData() {
+    async getLatestData() {
         const markets = marketController.markets;
 
         if (!markets.find((market) => market.symbol === this._symbol)) {
             return [null, [404, "market not found"]];
         }
 
-        return [
-            marketController.getLatestData(this._symbol),
-            [200, "latest market data retrieved"],
-        ];
+        const [responseCode, responseMessage] =
+            await marketController.fetchStockPrices(this._symbol);
+
+            return responseCode !== 200 && responseCode !== 304
+            ? [null, [responseCode, responseMessage]]
+            : [
+                  marketController.getLatestData(this._symbol),
+                  [200, "market data retrieved"],
+              ];
     }
 }
 

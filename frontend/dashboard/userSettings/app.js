@@ -31,14 +31,16 @@ async function init() {
 
     const userDiv = document.getElementById("userDiv");
     const user = JSON.parse(localStorage.getItem("user"));
-    favoriteMarketSearchInput.value = `${markets.find((m) => m.symbol === user.favoriteStock).name
-        }`;
+    favoriteMarketSearchInput.value = `${
+        markets.find((m) => m.symbol === user.favoriteStock).name
+    }`;
 
     userDiv.innerHTML = `
     <p class="name">Hello, ${user.name}</p>
     <p><b>Balance:</b> $${user.balance.toFixed(2)}</p>
-    <p><b>Favorite Market:</b> ${markets.find((m) => m.symbol === user.favoriteStock).name
-        } (${user.favoriteStock})</p>
+    <p><b>Favorite Market:</b> ${
+        markets.find((m) => m.symbol === user.favoriteStock).name
+    } (${user.favoriteStock})</p>
     `;
 
     logOut.addEventListener("click", () => {
@@ -134,7 +136,7 @@ async function updateFavoriteMarkets(market) {
     if (market) {
         responseDiv.innerHTML = `
         <div class="spinner-border" role="status">
-            <span class="visually-hidden">Signing in...</span>
+            <span class="visually-hidden">Updating favorite market...</span>
         </div>
         `;
         modal.show();
@@ -158,12 +160,14 @@ async function updateFavoriteMarkets(market) {
             <p class="redirect-time"></p>
             `;
 
-            document.querySelector('#modal .modal-body .btn-close').addEventListener('click', () => {
-                const user = JSON.parse(localStorage.getItem("user"));
-                user.favoriteStock = market.symbol;
-                localStorage.setItem("user", JSON.stringify(user));
-                window.location.reload();
-            });
+            document
+                .querySelector("#modal .modal-body .btn-close")
+                .addEventListener("click", () => {
+                    const user = JSON.parse(localStorage.getItem("user"));
+                    user.favoriteStock = market.symbol;
+                    localStorage.setItem("user", JSON.stringify(user));
+                    window.location.reload();
+                });
 
             const redirectTimeElement = document.querySelector(
                 ".modal-body .content .redirect-time"
@@ -198,7 +202,7 @@ async function handleUpdatePassword(updatePasswordForm) {
     if (password && newPassword && confirmNewPassword) {
         responseDiv.innerHTML = `
         <div class="spinner-border" role="status">
-            <span class="visually-hidden">Signing in...</span>
+            <span class="visually-hidden">Updating password...</span>
         </div>
         `;
         modal.show();
@@ -268,7 +272,7 @@ async function handleUpdatePassword(updatePasswordForm) {
             updatePasswordForm.currentPasswordNewPassword.value =
                 updatePasswordForm.newPassword.value =
                 updatePasswordForm.confirmNewPassword.value =
-                "";
+                    "";
             responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
         }
     }
@@ -282,7 +286,7 @@ async function handleUpdateUsername(updateUsernameForm) {
     if (password && newUsername && confirmNewUsername) {
         responseDiv.innerHTML = `
         <div class="spinner-border" role="status">
-            <span class="visually-hidden">Signing in...</span>
+            <span class="visually-hidden">Updating username...</span>
         </div>
         `;
         modal.show();
@@ -331,7 +335,7 @@ async function handleUpdateUsername(updateUsernameForm) {
             updateUsernameForm.currentPasswordUsername.value =
                 updateUsernameForm.newUsername.value =
                 updateUsernameForm.confirmNewUsername.value =
-                "";
+                    "";
             responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
         }
     }
@@ -340,53 +344,60 @@ async function handleUpdateUsername(updateUsernameForm) {
 async function handleDeleteAccount(deleteAccountForm) {
     const password = deleteAccountForm.deletePassword.value;
 
-    // TODO: Implement a warning message before deleting the account
-
     if (password) {
         responseDiv.innerHTML = `
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Signing in...</span>
-        </div>
+        <p class="warning">Are you sure you want to delete your account?</p>
+        <p class="warning">This action cannot be undone!</p>
+        <button type="button" class="btn btn-danger" id="waringBtn">Delete Account</button>
         `;
         modal.show();
 
-        const response = await fetch(`${endpoint}/user/delete`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            },
-            body: JSON.stringify({ password }),
-        });
-
-        if (response.ok) {
+        const warningBtn = document.getElementById("waringBtn");
+        warningBtn.addEventListener("click", async () => {
             responseDiv.innerHTML = `
-            <p class="success">Account deleted successfully</p>
-            <p class="redirect-time"></p>
-            `;
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Deleting account...</span>
+            </div>
+                `;
 
-            const redirectTimeElement = document.querySelector(
-                ".modal-body .content .redirect-time"
-            );
-            let redirectTime = 4;
-            const redirectInterval = setInterval(() => {
-                redirectTimeElement.innerText =
-                    redirectTime === 0
-                        ? "Redirecting..."
-                        : `Redirecting in ${--redirectTime}...`;
-                if (redirectTime <= 0) {
-                    clearInterval(redirectInterval);
+            const response = await fetch(`${endpoint}/user/delete`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+                },
+                body: JSON.stringify({ password }),
+            });
 
-                    localStorage.removeItem("user");
-                    localStorage.removeItem("jwt");
+            if (response.ok) {
+                responseDiv.innerHTML = `
+                <p class="success">Account deleted successfully</p>
+                <p class="redirect-time"></p>
+                `;
 
-                    window.location.href = "../../signUp";
-                }
-            }, 1000);
-        } else {
-            deleteAccountForm.deletePassword.value = "";
-            responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
-        }
+                const redirectTimeElement = document.querySelector(
+                    ".modal-body .content .redirect-time"
+                );
+                let redirectTime = 4;
+                const redirectInterval = setInterval(() => {
+                    redirectTimeElement.innerText =
+                        redirectTime === 0
+                            ? "Redirecting..."
+                            : `Redirecting in ${--redirectTime}...`;
+                    if (redirectTime <= 0) {
+                        clearInterval(redirectInterval);
+
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("jwt");
+
+                        window.location.href = "../../signUp";
+                    }
+                }, 1000);
+            } else {
+                deleteAccountForm.deletePassword.value = "";
+                responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
+            }
+        });
     }
 }
 

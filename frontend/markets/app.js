@@ -72,7 +72,7 @@ async function performSearch(symbol, marketName) {
             recentViewed.splice(existingIndex, 1);
         }
         recentViewed.unshift({ symbol, name: marketName });
-        if (recentViewed.length > 7) {
+        while (recentViewed.length > 5) {
             recentViewed.pop();
         }
         localStorage.setItem("recentViewed", JSON.stringify(recentViewed));
