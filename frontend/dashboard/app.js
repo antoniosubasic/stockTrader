@@ -441,11 +441,8 @@ async function generateStockTable(stock, tbody) {
         </div>
         <p>Please have patience, too many requests have been made</p>`;
 
-        setTimeout(() => {
-            generateStockTable(stock, tbody);
-        }, 60_000); // 1 minute
-
-        return;
+        await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
+        return generateStockTable(stock, tbody);
     } else if (!response.ok) {
         console.error(await response.text());
         return;
@@ -461,25 +458,35 @@ async function generateStockTable(stock, tbody) {
         <td>${formatCurrency(stock.averagePrice)}</td>
         <td>${formatCurrency(market.close)}</td>
         <td><span class="${market.valueChange > 0 ? "green" : "red"}"
-        >${market.percentChange > 0 ? "+" : ""}${market.valueChange.toFixed(
-        2
+        >${market.percentChange > 0 ? "+" : ""}${formatCurrency(
+        market.valueChange
     )}</span><br><span class="${market.percentChange > 0 ? "green" : "red"}"
         >${market.percentChange > 0 ? "+" : ""}${market.percentChange.toFixed(
         2
     )}%</span></td>
-    <td>${
+    <td><span>${
         market.close > stock.averagePrice
-            ? `<p class="green">+${(
-                  ((market.close - stock.averagePrice) * 100 * stock.quantity) /
-                  stock.averagePrice
-              ).toFixed(2)}%</p>`
+            ? `<span class="green">+${formatCurrency(
+                  market.close - stock.averagePrice
+              )}</span>`
             : market.close === stock.averagePrice
-            ? `<p>0.00%</p>`
-            : `<p class="red">${(
+            ? `<span>${formatCurrency(0)}</span>`
+            : `<span class="red">${formatCurrency(
+                  market.close - stock.averagePrice
+              )}</span>`
+    }</span><br><span>${
+        market.close > stock.averagePrice
+            ? `<span class="green">+${(
                   ((market.close - stock.averagePrice) * 100 * stock.quantity) /
                   stock.averagePrice
-              ).toFixed(2)}%</p>`
-    }</td>
+              ).toFixed(2)}%</span>`
+            : market.close === stock.averagePrice
+            ? `<span>0.00%</span>`
+            : `<span class="red">${(
+                  ((market.close - stock.averagePrice) * 100 * stock.quantity) /
+                  stock.averagePrice
+              ).toFixed(2)}%</span>`
+    }</span></td>
         <td><span>${formatCurrency(
             stock.quantity * market.close
         )}</span><br><span>${stock.quantity} stocks</span></td>
