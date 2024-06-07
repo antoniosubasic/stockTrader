@@ -128,23 +128,8 @@ async function loadContent(display) {
                         <div id="results"></div>
                     </div>
                 </div>
-                <div id="buy-form-container">
-                    <form class="d-flex" id="buy-form">
-                        <input
-                            class="form-control me-2"
-                            type="number"
-                            placeholder="Quantity"
-                            aria-label="Quantity"
-                            id="quantity"
-                            min="1"
-                            required
-                        />
-                        <button class="btn btn-primary" type="submit">Buy</button>
-                    </form>
-                </div>
             `;
             await initSearchBarHandler();
-            await initBuyFormHandler();
             break;
 
         case "sell-stocks":
@@ -152,7 +137,7 @@ async function loadContent(display) {
                 ${
                     user.currentStocks.length > 0
                         ? `
-                    <table class="table table-striped w-50 sell-stocks-table">
+                    <table class="table table-striped w-50 sell-stocks-table quantity-table">
                         <thead>
                             <tr>
                                 <th>Symbol</th>
@@ -213,6 +198,8 @@ async function initSearchBarHandler() {
 
         searchForm.search.value = market.name;
         marketSymbol = market.symbol;
+
+        await initBuyFormHandler();
     });
 }
 
@@ -260,43 +247,88 @@ async function fetchMarkets(fetchUrl) {
 }
 
 async function initBuyFormHandler() {
-    document
-        .getElementById("buy-form")
-        .addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const quantity = parseInt(
-                document.getElementById("quantity").value
-            );
+    if (marketSymbol) {
+        modalBody.innerHTML = `
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        `;
+        modal.show();
 
-            if (!quantity || quantity <= 0) {
-                modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
-                modal.show();
-            } else {
-                if (marketSymbol) {
-                    const response = await fetch(
-                        `${endpoint}/market/buy?symbol=${marketSymbol}&quantity=${quantity}`,
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `Bearer ${localStorage.getItem(
-                                    "jwt"
-                                )}`,
-                            },
+        const response = await fetch(
+            `${endpoint}/market?symbol=${marketSymbol}`
+        );
+        const market = await response.json();
+        modal.hide();
+
+        const maxBuy = Math.floor(
+            JSON.parse(localStorage.getItem("user")).balance /
+                market.stockPrices[market.stockPrices.length - 1].close
+        );
+
+        document.getElementById("tab").innerHTML = `
+            <div class="w-75">
+                <table class="table quantity-table">
+                    <thead>
+                        <tr>
+                            <th>Market</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">${market.name}</th>
+                            <td>${formatCurrency(
+                                market.stockPrices[
+                                    market.stockPrices.length - 1
+                                ].close
+                            )}</td>
+                            <td><input id="buy-stocks-quantity" type="number" min="1" max="${maxBuy}"> / ${maxBuy}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-primary" id="buy-stocks-button">Buy</button>
+        `;
+
+        document
+            .getElementById("buy-stocks-button")
+            .addEventListener("click", async (e) => {
+                const quantity = parseInt(
+                    document.getElementById("buy-stocks-quantity").value
+                );
+
+                if (!quantity || quantity <= 0) {
+                    modalBody.innerHTML = `<p class="red">Invalid quantity</p>`;
+                    modal.show();
+                } else {
+                    if (marketSymbol) {
+                        const response = await fetch(
+                            `${endpoint}/market/buy?symbol=${marketSymbol}&quantity=${quantity}`,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${localStorage.getItem(
+                                        "jwt"
+                                    )}`,
+                                },
+                            }
+                        );
+
+                        if (response.ok) {
+                            const json = await response.json();
+                            localStorage.setItem("user", JSON.stringify(json));
+                            window.location.reload();
+                        } else {
+                            modalBody.innerHTML = `<p class="red">${await response.text()}</p>`;
+                            modal.show();
                         }
-                    );
-
-                    if (response.ok) {
-                        const json = await response.json();
-                        localStorage.setItem("user", JSON.stringify(json));
-                        window.location.reload();
-                    } else {
-                        modalBody.innerHTML = `<p class="red">${await response.text()}</p>`;
-                        modal.show();
                     }
                 }
-            }
-        });
+            });
+    }
 }
 
 async function initSellStocksHandler() {
