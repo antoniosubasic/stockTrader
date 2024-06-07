@@ -105,7 +105,7 @@
     margin: 0;
 }
 
-.sell-stocks-table tbody input {
+.quantity-table tbody input {
     text-align: right;
     border: 1px solid #ced4da;
     outline: none;
@@ -120,7 +120,8 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-#sell-button {
+#sell-button,
+#buy-stocks-button {
     width: 5rem;
 }
 
