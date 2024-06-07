@@ -97,3 +97,12 @@
     font-size: 1.8rem;
     font-weight: bold;
 }
+
+.warning {
+    color: red;
+    font-size: 1.1rem;
+}
+
+#waringBtn {
+    margin-top: 1rem;
+}
