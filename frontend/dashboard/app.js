@@ -56,7 +56,7 @@ async function loadContent(display) {
 
     switch (display) {
         case "stocks":
-            await loadStocks(tabContent, user);
+            await loadMyStocks(tabContent, user);
             break;
 
         case "transactions":
@@ -133,42 +133,7 @@ async function loadContent(display) {
             break;
 
         case "sell-stocks":
-            tabContent.innerHTML = `
-                ${
-                    user.currentStocks.length > 0
-                        ? `
-                    <table class="table table-striped w-50 sell-stocks-table quantity-table">
-                        <thead>
-                            <tr>
-                                <th>Symbol</th>
-                                <th>Average Price</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${user.currentStocks
-                                .map(
-                                    (stock) =>
-                                        `<tr data-symbol="${
-                                            stock.symbol
-                                        }"><th scope="row">${
-                                            stock.symbol
-                                        }</th><td>${formatCurrency(
-                                            stock.averagePrice
-                                        )}</td><td><input type="number" min="1" max="${
-                                            stock.quantity
-                                        }"> / ${stock.quantity}</td></tr>`
-                                )
-                                .join("")}
-                        </tbody>
-                    </table>
-                    <div>
-                        <button class="btn btn-primary" id="sell-button">Sell</button>
-                    </div>
-                `
-                        : '<p class="red">You don\'t own any stocks</p>'
-                }
-            `;
+            await loadSellStocks(tabContent, user);
             if (user.currentStocks.length > 0) {
                 await initSellStocksHandler();
             }
@@ -183,7 +148,7 @@ async function initSearchBarHandler() {
 
     searchInput.addEventListener("input", (e) => {
         const value = e.target.value;
-        filterAndDisplayMarkets(value, resultsDiv, searchForm, markets);
+        filterAndDisplayMarkets(value, resultsDiv, searchForm);
     });
 
     searchForm.addEventListener("submit", async (e) => {
@@ -203,7 +168,7 @@ async function initSearchBarHandler() {
     });
 }
 
-function filterAndDisplayMarkets(value, resultsDiv, searchForm, markets) {
+function filterAndDisplayMarkets(value, resultsDiv, searchForm) {
     resultsDiv.innerHTML = "";
     const newDiv = document.createElement("div");
     if (value) {
@@ -220,10 +185,12 @@ function filterAndDisplayMarkets(value, resultsDiv, searchForm, markets) {
             resultItem.classList.add("result-item");
             resultItem.textContent = `${market.name} (${market.symbol})`;
 
-            resultItem.addEventListener("click", () => {
+            resultItem.addEventListener("click", async () => {
                 searchForm.search.value = market.name;
                 marketSymbol = market.symbol;
                 resultsDiv.innerHTML = "";
+
+                await initBuyFormHandler();
             });
             newDiv.appendChild(resultItem);
         });
@@ -328,6 +295,8 @@ async function initBuyFormHandler() {
                     }
                 }
             });
+
+            
     }
 }
 
@@ -385,17 +354,15 @@ async function initSellStocksHandler() {
         });
 }
 
-async function loadStocks(tabContent, user) {
+async function loadMyStocks(tabContent, user) {
     modalBody.innerHTML = `
         <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
-        </div>
-        <p>Please note that having a lot of stocks may take a while to load</p>`;
+        </div>`;
     modal.show();
 
     if (user.currentStocks.length <= 0) {
-        tabContent.innerHTML = "";
-        tabContent.innerHTML += `<p class="red">You don\'t own any stocks</p>`;
+        tabContent.innerHTML = `<p class="red">You don\'t own any stocks</p>`;
         modal.hide();
         return;
     }
@@ -418,7 +385,7 @@ async function loadStocks(tabContent, user) {
         `;
 
     for (const stock of user.currentStocks) {
-        await generateStockTable(stock, tbody);
+        await generateMyStockTable(stock, tbody);
     }
 
     table.appendChild(thead);
@@ -429,7 +396,7 @@ async function loadStocks(tabContent, user) {
     modal.hide();
 }
 
-async function generateStockTable(stock, tbody) {
+async function generateMyStockTable(stock, tbody) {
     const response = await fetch(
         `${endpoint}/market/latest?symbol=${stock.symbol}`
     );
@@ -439,10 +406,10 @@ async function generateStockTable(stock, tbody) {
         <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p>Please have patience, too many requests have been made</p>`;
+        <p>Please note that having a lot of stocks may take a while to load</p>`;
 
         await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
-        return generateStockTable(stock, tbody);
+        return generateMyStockTable(stock, tbody);
     } else if (!response.ok) {
         console.error(await response.text());
         return;
@@ -453,8 +420,10 @@ async function generateStockTable(stock, tbody) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
         <th scope="row"><span>${
-            markets.find((m) => m.symbol === stock.symbol).name
-        }</span><br><span>(${stock.symbol})</span></th>
+            stock.symbol
+        }</span><br><span class="market-name">${
+        markets.find((m) => m.symbol === stock.symbol).name
+    }</span></th>
         <td>${formatCurrency(stock.averagePrice)}</td>
         <td>${formatCurrency(market.close)}</td>
         <td><span class="${market.valueChange > 0 ? "green" : "red"}"
@@ -477,13 +446,13 @@ async function generateStockTable(stock, tbody) {
     }</span><br><span>${
         market.close > stock.averagePrice
             ? `<span class="green">+${(
-                  ((market.close - stock.averagePrice) * 100 * stock.quantity) /
+                  ((market.close - stock.averagePrice) * 100) /
                   stock.averagePrice
               ).toFixed(2)}%</span>`
             : market.close === stock.averagePrice
             ? `<span>0.00%</span>`
             : `<span class="red">${(
-                  ((market.close - stock.averagePrice) * 100 * stock.quantity) /
+                  ((market.close - stock.averagePrice) * 100) /
                   stock.averagePrice
               ).toFixed(2)}%</span>`
     }</span></td>
@@ -491,6 +460,116 @@ async function generateStockTable(stock, tbody) {
             stock.quantity * market.close
         )}</span><br><span>${stock.quantity} stocks</span></td>
     `;
+
+    tbody.appendChild(tr);
+}
+
+async function loadSellStocks(tabContent, user) {
+    modalBody.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>`;
+    modal.show();
+
+    if (user.currentStocks.length <= 0) {
+        tabContent.innerHTML = `<p class="red">You don\'t own any stocks</p>`;
+        modal.hide();
+        return;
+    }
+
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const tbody = document.createElement("tbody");
+
+    table.classList.add(
+        "table",
+        "table-striped",
+        "sell-stocks-table",
+        "w-75",
+        "quantity-table"
+    );
+
+    thead.innerHTML = `
+    <tr>
+        <th scope="col">Market</th>
+        <th scope="col">Current Price</th>
+        <th scope="col">Development</th>
+        <th scope="col">Quantity</th>
+    </tr>
+    `;
+
+    for (const stock of user.currentStocks) {
+        await generateSellStockTable(stock, tbody);
+    }
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tabContent.innerHTML = "";
+    tabContent.appendChild(table);
+
+    tabContent.innerHTML += `
+        <div>
+            <button class="btn btn-primary" id="sell-button">Sell</button>
+        </div>`;
+
+    modal.hide();
+}
+
+async function generateSellStockTable(stock, tbody) {
+    const response = await fetch(
+        `${endpoint}/market/latest?symbol=${stock.symbol}`
+    );
+
+    if (response.status === 429) {
+        modalBody.innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Please note that having a lot of stocks may take a while to load</p>`;
+
+        await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
+        return generateSellStockTable(stock, tbody);
+    } else if (!response.ok) {
+        console.error(await response.text());
+        return;
+    }
+
+    const market = await response.json();
+
+    const tr = document.createElement("tr");
+    tr.setAttribute("data-symbol", stock.symbol);
+    tr.innerHTML = `
+        <th scope="row"><span>${stock.symbol}</span><br>
+        <span class="market-name">${
+            markets.find((m) => m.symbol === stock.symbol).name
+        }</span></th>
+        <td>${formatCurrency(market.close)}</td>
+        <td><span>${
+            market.close > stock.averagePrice
+                ? `<span class="green">+${formatCurrency(
+                      market.close - stock.averagePrice
+                  )}</span>`
+                : market.close === stock.averagePrice
+                ? `<span>${formatCurrency(0)}</span>`
+                : `<span class="red">${formatCurrency(
+                      market.close - stock.averagePrice
+                  )}</span>`
+        }</span><br><span>${
+        market.close > stock.averagePrice
+            ? `<span class="green">+${(
+                  ((market.close - stock.averagePrice) * 100) /
+                  stock.averagePrice
+              ).toFixed(2)}%</span>`
+            : market.close === stock.averagePrice
+            ? `<span>0.00%</span>`
+            : `<span class="red">${(
+                  ((market.close - stock.averagePrice) * 100) /
+                  stock.averagePrice
+              ).toFixed(2)}%</span>`
+    }</span></td>
+        <td><input type="number" min="1" max="${stock.quantity}"> / ${
+        stock.quantity
+    }</td>`;
 
     tbody.appendChild(tr);
 }

@@ -125,6 +125,11 @@ input[type="number"]::-webkit-inner-spin-button {
     width: 5rem;
 }
 
-.buy-stocks-table tbody td {
+.buy-stocks-table tbody td,
+.sell-stocks-table tbody td {
     vertical-align: middle;
+}
+
+.market-name {
+    font-weight: normal !important;
 }
