@@ -1,5 +1,5 @@
 import endpoint from "../assets/scripts/config.js";
-import { Drawer } from "./drawer.js";
+import { Drawer } from "../assets/scripts/drawer.js";
 import auth from "../assets/scripts/auth.js";
 
 async function init() {

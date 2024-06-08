@@ -133,3 +133,28 @@ input[type="number"]::-webkit-inner-spin-button {
 .market-name {
     font-weight: normal !important;
 }
+
+#chart-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 5vh;
+}
+
+#chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 70vh;
+    width: 80vw;
+}
+
+#chart {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
