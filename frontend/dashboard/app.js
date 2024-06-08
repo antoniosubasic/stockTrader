@@ -1,5 +1,6 @@
 import auth from "../assets/scripts/auth.js";
 import endpoint from "../assets/scripts/config.js";
+import { Drawer } from "../assets/scripts/drawer.js";
 
 let marketSymbol;
 let markets;
@@ -257,7 +258,13 @@ async function initBuyFormHandler() {
                 </table>
             </div>
             <button class="btn btn-primary" id="buy-stocks-button">Buy</button>
+            <div id="chart-box">
+                <div id="chart-container"></div>
+            </div>
         `;
+
+        const drawer = new Drawer(marketSymbol);
+        await drawer.drawMarket();
 
         document
             .getElementById("buy-stocks-button")

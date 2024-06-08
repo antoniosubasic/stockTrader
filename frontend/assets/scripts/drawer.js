@@ -1,4 +1,4 @@
-import endpoint from "../assets/scripts/config.js";
+import endpoint from "./config.js";
 
 export class Drawer {
     constructor(symbol) {
