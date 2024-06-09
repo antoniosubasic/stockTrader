@@ -88,8 +88,8 @@
 #userDiv {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 4rem;
+    align-items: end;
+    gap: 2rem;
     margin-top: 2rem;
 }
 
@@ -105,4 +105,9 @@
 
 #waringBtn {
     margin-top: 1rem;
+}
+
+#profilePicture {
+    width: 8rem;
+    height: 8rem;
 }
