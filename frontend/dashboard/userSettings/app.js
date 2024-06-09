@@ -30,13 +30,16 @@ async function init() {
     const deleteAccountForm = document.getElementById("delete-account-form");
 
     const userDiv = document.getElementById("userDiv");
+    const greetingDiv = document.querySelector("#userDiv > .greeting");
+
     const user = JSON.parse(localStorage.getItem("user"));
     favoriteMarketSearchInput.value = `${
         markets.find((m) => m.symbol === user.favoriteStock).name
     }`;
 
+    greetingDiv.innerHTML += `<p class="name">Hello, ${user.name}</p>`;
+
     userDiv.innerHTML += `
-    <p class="name">Hello, ${user.name}</p>
     <p><b>Balance:</b> $${user.balance.toFixed(2)}</p>
     <p><b>Favorite Market:</b> ${
         markets.find((m) => m.symbol === user.favoriteStock).name
