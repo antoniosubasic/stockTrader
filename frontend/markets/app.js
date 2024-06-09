@@ -51,6 +51,13 @@ async function init() {
     });
 }
 
+function formatCurrency(value) {
+    return value.toLocaleString("de-AT", {
+        style: "currency",
+        currency: "USD",
+    });
+}
+
 async function performSearch(symbol, marketName) {
     if (symbol !== "") {
         const drawer = new Drawer(symbol);
@@ -165,13 +172,13 @@ function createStockDiv(stock, container) {
     stockName.classList.add("stock-name");
 
     const stockPrice = document.createElement("span");
-    stockPrice.textContent = `${stock.currentPrice.toFixed(2)}`;
+    stockPrice.textContent = `${formatCurrency(stock.currentPrice)}`;
     stockPrice.classList.add("stock-price");
 
     const stockChangeValue = document.createElement("span");
     stockChangeValue.textContent = `${
         stock.valueChange >= 0 ? "+" : ""
-    }${stock.valueChange.toFixed(2)}`;
+    }${formatCurrency(stock.valueChange)}`;
     stockChangeValue.classList.add(
         "stock-change-value",
         stock.valueChange >= 0 ? "green" : "red"

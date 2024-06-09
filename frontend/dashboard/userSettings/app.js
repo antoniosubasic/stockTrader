@@ -176,8 +176,8 @@ async function updateFavoriteMarkets(market) {
             const redirectInterval = setInterval(() => {
                 redirectTimeElement.innerText =
                     redirectTime === 0
-                        ? "Redirecting..."
-                        : `Redirecting in ${--redirectTime}...`;
+                        ? "Reloading..."
+                        : `Reloading in ${--redirectTime}...`;
                 if (redirectTime <= 0) {
                     clearInterval(redirectInterval);
 
@@ -257,8 +257,8 @@ async function handleUpdatePassword(updatePasswordForm) {
             const redirectInterval = setInterval(() => {
                 redirectTimeElement.innerText =
                     redirectTime === 0
-                        ? "Redirecting..."
-                        : `Redirecting in ${--redirectTime}...`;
+                        ? "Reloading..."
+                        : `Reloading in ${--redirectTime}...`;
                 if (redirectTime <= 0) {
                     clearInterval(redirectInterval);
 
@@ -320,8 +320,8 @@ async function handleUpdateUsername(updateUsernameForm) {
             const redirectInterval = setInterval(() => {
                 redirectTimeElement.innerText =
                     redirectTime === 0
-                        ? "Redirecting..."
-                        : `Redirecting in ${--redirectTime}...`;
+                        ? "Reloading..."
+                        : `Reloading in ${--redirectTime}...`;
                 if (redirectTime <= 0) {
                     clearInterval(redirectInterval);
 
@@ -382,8 +382,8 @@ async function handleDeleteAccount(deleteAccountForm) {
                 const redirectInterval = setInterval(() => {
                     redirectTimeElement.innerText =
                         redirectTime === 0
-                            ? "Redirecting..."
-                            : `Redirecting in ${--redirectTime}...`;
+                            ? "Reloading..."
+                            : `Reloading in ${--redirectTime}...`;
                     if (redirectTime <= 0) {
                         clearInterval(redirectInterval);
 
