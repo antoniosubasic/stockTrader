@@ -35,7 +35,7 @@ async function init() {
         markets.find((m) => m.symbol === user.favoriteStock).name
     }`;
 
-    userDiv.innerHTML = `
+    userDiv.innerHTML += `
     <p class="name">Hello, ${user.name}</p>
     <p><b>Balance:</b> $${user.balance.toFixed(2)}</p>
     <p><b>Favorite Market:</b> ${
