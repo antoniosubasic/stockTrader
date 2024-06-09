@@ -1,5 +1,12 @@
 import endpoint from "./config.js";
 
+function formatCurrency(value) {
+    return value.toLocaleString("de-AT", {
+        style: "currency",
+        currency: "USD",
+    });
+}
+
 export class Drawer {
     constructor(symbol) {
         this.symbol = symbol;
@@ -7,7 +14,7 @@ export class Drawer {
         this.canvasDiv = document.getElementById("chart-container");
         this.market;
         this.stockPrices;
-        this.modal = new bootstrap.Modal(document.getElementById('modal'));
+        this.modal = new bootstrap.Modal(document.getElementById("modal"));
         this.modalContent = document.querySelector("#modal .modal-content");
     }
 
@@ -30,7 +37,8 @@ export class Drawer {
             this.stockPrices = this.market.stockPrices;
             this.modal.hide();
             return true;
-        } else if (response.status === 429) { // API data limit reached (too many requests)
+        } else if (response.status === 429) {
+            // API data limit reached (too many requests)
             this.modalContent.innerHTML = `
                 <div class="modal-body alert alert-danger grid" role="alert">
                     <h4 class="alert-heading">Too many requests!</h4>
@@ -103,12 +111,14 @@ export class Drawer {
                                     context.dataIndex;
                                 const stockPrice = this.stockPrices[index];
                                 return [
-                                    `Close: $ ${stockPrice.close.toFixed(2)}`,
-                                    `Open: $ ${stockPrice.open.toFixed(2)}`,
-                                    `High: $ ${stockPrice.high.toFixed(2)}`,
-                                    `Low: $ ${stockPrice.low.toFixed(2)}`,
-                                    `Value Change: $ ${stockPrice.valueChange.toFixed(
-                                        2
+                                    `Close: ${formatCurrency(
+                                        stockPrice.close
+                                    )}`,
+                                    `Open: ${formatCurrency(stockPrice.open)}`,
+                                    `High: ${formatCurrency(stockPrice.high)}`,
+                                    `Low: ${formatCurrency(stockPrice.low)}`,
+                                    `Value Change: ${formatCurrency(
+                                        stockPrice.valueChange
                                     )}`,
                                     `Percent Change: ${stockPrice.percentChange.toFixed(
                                         2
@@ -150,20 +160,22 @@ export class Drawer {
         importantDataDiv.id = "important-data";
         const stockPrice = this.stockPrices[this.stockPrices.length - 1];
         importantDataDiv.innerHTML = `
-        <span id="last-price">${stockPrice.close.toFixed(2)}</span>
-        <span class="${stockPrice.valueChange >= 0 ? "green" : "red"}">${stockPrice.valueChange >= 0 ? "+" : ""
-            }${stockPrice.valueChange.toFixed(2)}</span>
-        <span class="${stockPrice.percentChange >= 0 ? "green" : "red"}">(${stockPrice.valueChange >= 0 ? "+" : ""
-            }${stockPrice.percentChange.toFixed(2)}%)</span>
+        <span id="last-price">${formatCurrency(stockPrice.close)}</span>
+        <span class="${stockPrice.valueChange >= 0 ? "green" : "red"}">${
+            stockPrice.valueChange >= 0 ? "+" : ""
+        }${formatCurrency(stockPrice.valueChange)}</span>
+        <span class="${stockPrice.percentChange >= 0 ? "green" : "red"}">${
+            stockPrice.valueChange >= 0 ? "+" : ""
+        }${stockPrice.percentChange.toFixed(2)}%</span>
         `;
         this.marketDiv.appendChild(importantDataDiv);
 
         const dataDiv = document.createElement("div");
         dataDiv.id = "data";
         dataDiv.innerHTML = `
-        <span><b>Open:</b> $${stockPrice.open.toFixed(2)}</span>
-        <span><b>High:</b> $${stockPrice.high.toFixed(2)}</span>
-        <span><b>Low:</b> $${stockPrice.low.toFixed(2)}</span>
+        <span><b>Open:</b> ${formatCurrency(stockPrice.open)}</span>
+        <span><b>High:</b> ${formatCurrency(stockPrice.high)}</span>
+        <span><b>Low:</b> ${formatCurrency(stockPrice.low)}</span>
         `;
         this.marketDiv.appendChild(dataDiv);
 
