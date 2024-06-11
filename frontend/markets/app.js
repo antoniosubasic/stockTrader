@@ -2,6 +2,9 @@ import endpoint from "../assets/scripts/config.js";
 import { Drawer } from "../assets/scripts/drawer.js";
 import auth from "../assets/scripts/auth.js";
 
+let modal;
+let modalContent;
+
 async function init() {
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search");
@@ -9,6 +12,9 @@ async function init() {
     const toggleButton = document.getElementById("toggle-btn");
 
     const markets = await fetchMarkets(`${endpoint}/markets`);
+
+    modal = new bootstrap.Modal(document.getElementById("modal"));
+    modalContent = document.querySelector("#modal .modal-content");
 
     const urlParams = new URLSearchParams(window.location.search);
     const symbol = urlParams.get("symbol");
@@ -256,9 +262,28 @@ async function updateRecentViewed() {
     const recentViewed = JSON.parse(localStorage.getItem("recentViewed")) || [];
 
     for (const item of recentViewed) {
-        const market = await fetchMarkets(
+        const response = await fetch(
             `${endpoint}/market/latest?symbol=${item.symbol}`
         );
+
+        if (response.status === 429) {
+            modalContent.innerHTML = `
+                <div class="modal-body centered">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Please have patience currently too many requests are being made to the server. This can take a while.</p>
+                </div>`;
+            modal.show();
+
+            await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
+            return await updateRecentViewed();
+        } else if (!response.ok) {
+            console.error(await response.text());
+            return;
+        }
+
+        const market = await response.json();
 
         createStockDiv(
             {
@@ -273,6 +298,8 @@ async function updateRecentViewed() {
     }
 
     addEventListenerToHeadings("viewed-heading", "recent-viewed-inner");
+
+    modal.hide();
 }
 
 function animateDiv(divId) {

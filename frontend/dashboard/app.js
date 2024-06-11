@@ -535,7 +535,7 @@ async function generateSellStockTable(stock, tbody) {
         <p>Please note that having a lot of stocks may take a while to load</p>`;
 
         await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
-        return generateSellStockTable(stock, tbody);
+        return await generateSellStockTable(stock, tbody);
     } else if (!response.ok) {
         console.error(await response.text());
         return;
