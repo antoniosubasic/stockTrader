@@ -1,137 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Stock Trader</title>
+        <link rel="icon" href="./assets/images/logo.png" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="./assets/styles/navbar.css" />
+        <link rel="stylesheet" href="./assets/styles/main.css" />
+        <link rel="stylesheet" href="./style.css" />
+        <script type="module" src="./assets/scripts/navbar.js" defer></script>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stock Trader</title>
-    <link rel="icon" href="./assets/images/logo.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./assets/styles/navbar.css" />
-    <link rel="stylesheet" href="./assets/styles/main.css" />
-    <link rel="stylesheet" href="./style.css" />
-    <script type="module" src="./assets/scripts/navbar.js" defer></script>
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-md">
-        <div class="container-fluid">
-            <img src="./assets/images/logo.png" class="navbar-brand img-fluid" />
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
-                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./markets/">Markets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./dashboard/">Dashboard</a>
-                    </li>
-                </ul>
-                <div id="signInUp-container"></div>
-            </div>
-        </div>
-    </nav>
-    <main class="main-centered">
-        <article>
-            <section class="section">
-                <div class="container">
-                    <div class="content">
-                        <h1 class="h1-title">Buy & Sell Digital ...</h1>
-                        <p class="hero-text">
-                            Lorem ipsum dolor sit amet consectetur,
-                            adipisicing elit. Tenetur, magni sapiente,
-                            inventore tempora nesciunt eaque sit nostrum
-                            officiis consequuntur commodi, eos sed. Eligendi
-                            veritatis nisi beatae voluptate reprehenderit
-                            sit sapiente!
-                        </p>
-                        <a href="#" class="get-started-now-btn">Get started now</a>
-                    </div>
+    <body>
+        <nav class="navbar navbar-expand-md">
+            <div class="container-fluid">
+                <img
+                    src="./assets/images/logo.png"
+                    class="navbar-brand img-fluid" />
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbar"
+                    aria-controls="navbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link active"
+                                aria-current="page"
+                                href="./"
+                                >Home</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./markets/">Markets</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./dashboard/"
+                                >Dashboard</a
+                            >
+                        </li>
+                    </ul>
+                    <div id="signInUp-container"></div>
                 </div>
-            </section>
-        </article>
-
-        <div id="total-graph">
-
-            <svg id="graph" width="1204" height="789" viewBox="0 0 1204 789" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M9 0L0.339746 15H17.6603L9 0ZM9 780H7.5V781.5H9V780ZM1204 780L1189 771.34V788.66L1204 780ZM7.5 13.5V780H10.5V13.5H7.5ZM9 781.5H1190.5V778.5H9V781.5Z"
-                    fill="black" />
-            </svg>
-<!--          
-            <svg id="line-1" width="175" height="468" viewBox="0 0 175 468" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 467L173 0.999989" stroke="#039623" stroke-width="3" />
-            </svg>
-
-            <svg id="line-2" width="46" height="132" viewBox="0 0 46 132" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 1L44 131" stroke="#D90F0F" stroke-width="3" />
-            </svg>
-
-            <svg id="line-3" width="114" height="205" viewBox="0 0 114 205" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 204L112 0.999995" stroke="#039623" stroke-width="3" />
-            </svg>
-
-            <svg id="line-4" width="49" height="76" viewBox="0 0 49 76" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 1L47 75" stroke="#D90F0F" stroke-width="3" />
-            </svg>
-
-            <svg id="line-5" width="27" height="51" viewBox="0 0 27 51" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 50L25 0.999998" stroke="#039623" stroke-width="3" />
-            </svg>
-
-            <svg id="line-6" width="146" height="189" viewBox="0 0 146 189" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 1L144 188" stroke="#D90F0F" stroke-width="3" />
-            </svg>
-
-            <svg id="line-7" width="156" height="270" viewBox="0 0 156 270" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 269L154 0.999991" stroke="#039623" stroke-width="3" />
-            </svg>
-
-            <svg id="line-8" width="48" height="95" viewBox="0 0 48 95" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 1L46 94" stroke="#D90F0F" stroke-width="3" />
-            </svg>
-
-            <svg id="line-9" width="28" height="87" viewBox="0 0 28 87" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 86L26 0.999997" stroke="#039623" stroke-width="3" />
-            </svg>
-
-            <svg id="line-10" width="133" height="70" viewBox="0 0 133 70" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 2L132 68" stroke="#D90F0F" stroke-width="3" />
-            </svg>
-
-            <svg id="line-11" width="116" height="115" viewBox="0 0 116 115" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 113L114 2" stroke="#039623" stroke-width="3" />
-            </svg>
-
-            <svg id="line-12" width="32" height="64" viewBox="0 0 32 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 1L30 63" stroke="#D90F0F" stroke-width="3" />
-            </svg>
-
-            <svg id="line-13" width="76" height="151" viewBox="0 0 76 151" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 150L74 0.999995" stroke="#039623" stroke-width="3" />
-            </svg>
-        </div>
-        -->
-
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-</body>
-
+            </div>
+        </nav>
+        <main>
+            <div class="main-centered">
+                <div id="intro">
+                    <h1 sytle="font-family: Inter;">Trade Smart, Win Big</h1>
+                    <p>
+                        Test your trading skills, compete with friends, and
+                        climb to the top. Are you ready to become the next stock
+                        market mogul?
+                    </p>
+                    <a href="./dashboard/" class="btn btn-primary"
+                        >Get started now</a
+                    >
+                </div>
+                <img src="./assets/images/logo.png" alt="StockTrader Logo" />
+            </div>
+        </main>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    </body>
 </html>
