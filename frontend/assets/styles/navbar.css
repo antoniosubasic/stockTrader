@@ -21,7 +21,8 @@ nav .active {
 
 .navbar-brand {
     height: 3.5rem;
-    margin-right: 3rem;
+    padding: 0.5rem;
+    margin-right: 1rem;
 }
 
 ::-webkit-scrollbar {
