@@ -1,3 +1,8 @@
+html,
+body {
+    font-family: 'Inter', sans-serif;
+}
+
 #market-div {
     margin-top: 1.25rem;
     display: flex;
