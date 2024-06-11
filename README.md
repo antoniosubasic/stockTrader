@@ -8,10 +8,10 @@ The Stock Trader Game is a web application that was created as a school project 
 
 -   **[Antonio Subašić](https://github.com/antoniosubasic)**
 -   **[Mark Grünzweil](https://github.com/m-gruen)**
--   **[David Pogner](https://github.com/David-Pogner)**
 
 ### This project uses the following technologies:
 
 -   **[Bootstrap](https://getbootstrap.com/)**
 -   **[Chart.js](https://www.chartjs.org/)**
 -   **[polygon.io](https://polygon.io/)**
+-   **[jQuery](https://jquery.com/)**

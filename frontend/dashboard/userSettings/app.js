@@ -464,6 +464,8 @@ function handleUserProfileClick() {
         "male5.jpeg",
         "male6.jpeg",
         "male7.jpeg",
+        "male8.jpg",
+        "male9.jpg",
     ];
 
     const profilePicturesFemale = [
@@ -485,6 +487,9 @@ function handleUserProfileClick() {
         "car6.jpeg",
         "car7.jpeg",
         "car8.jpeg",
+        "car9.jpeg",
+        "car10.jpeg",
+        "car11.jpeg",
     ];
 
     function appendImagesToDiv(category, imagesArray) {
