@@ -3,15 +3,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const signInUpDiv = document.getElementById("signInUp-container");
 
     const location = window.location.pathname;
-    let path = `.${["markets", "dashboard"].some((str) => location.includes(str)) ? "." : ""}`;
+    let path = `.${
+        ["markets", "dashboard"].some((str) => location.includes(str))
+            ? "."
+            : ""
+    }`;
 
     if (user) {
-        const username = JSON.parse(user).name;
+        const user = JSON.parse(localStorage.getItem("user"));
 
         signInUpDiv.innerHTML = `
         <div class="dropdown">
             <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;">
-                <img src="${path}/assets/images/blank-profile.png"class="rounded-circle" style="height: 2rem; margin-right: 0.5rem;"> Hello, ${username}
+                <img src="${path}/assets/images/profiles/${
+            user.profilePicture ? user.profilePicture : "default1.jpeg"
+        }" class="rounded-circle" style="height: 2rem; margin-right: 0.5rem;"> Hello, ${user.name}
             </button>
       
             <ul class="dropdown-menu">
@@ -26,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.removeItem("jwt");
             window.location.reload();
         });
-
     } else {
         signInUpDiv.innerHTML = `
         <a href="${path}/signIn/" class="btn signInUp" role="button" aria-disabled="true" style="border: 0;">Sign in</a>

@@ -119,5 +119,23 @@
 }
 
 #profilePicture {
-    width: 5rem;
+    width: 8rem;
+}
+
+#profilePictureDiv {
+    cursor: pointer;
+}
+
+.profile-picture-item {
+    width: 8rem;
+    cursor: pointer;
+    margin: 1rem;
+}
+
+.modal-big {
+    max-width: 80vw;
+}
+
+.profile-picture-category {
+    margin-top: 1rem;
 }

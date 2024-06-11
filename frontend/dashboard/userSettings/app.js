@@ -2,6 +2,7 @@ import auth from "../../assets/scripts/auth.js";
 import endpoint from "../../assets/scripts/config.js";
 
 let responseDiv;
+let modalDialog;
 let modal;
 
 async function init() {
@@ -23,6 +24,7 @@ async function init() {
     );
 
     responseDiv = document.querySelector("#modal .modal-body .content");
+    modalDialog = document.querySelector("#modal .modal-dialog");
     modal = new bootstrap.Modal(document.getElementById("modal"));
 
     const updatePasswordForm = document.getElementById("update-password-form");
@@ -37,6 +39,11 @@ async function init() {
         markets.find((m) => m.symbol === user.favoriteStock).name
     }`;
 
+    const profileImage = document.getElementById("profilePicture");
+    if (user.profilePicture) {
+        profileImage.src = `../../assets/images/profiles/${user.profilePicture}`;
+    }
+
     greetingDiv.innerHTML += `<p class="name">Hello, ${user.name}</p>`;
 
     userDiv.innerHTML += `
@@ -45,6 +52,12 @@ async function init() {
         markets.find((m) => m.symbol === user.favoriteStock).name
     } (${user.favoriteStock})</p>
     `;
+
+    document
+        .getElementById("profilePictureDiv")
+        .addEventListener("click", () => {
+            handleUserProfileClick();
+        });
 
     logOut.addEventListener("click", () => {
         localStorage.removeItem("user");
@@ -402,6 +415,138 @@ async function handleDeleteAccount(deleteAccountForm) {
             }
         });
     }
+}
+
+function handleUserProfileClick() {
+    const profilePictureDiv = document.createElement("div");
+
+    const profilePicturesDefault = [
+        "default1.jpeg",
+        "default2.jpeg",
+        "default3.jpeg",
+        "default4.jpeg",
+    ];
+
+    const profilePicturesNature = [
+        "nature1.jpeg",
+        "nature2.jpeg",
+        "nature3.jpeg",
+        "nature4.jpeg",
+        "nature5.jpeg",
+        "nature6.jpeg",
+        "nature7.jpeg",
+        "nature8.jpeg",
+        "nature9.jpeg",
+    ];
+
+    const profilePicturesMale = [
+        "male1.jpeg",
+        "male2.jpeg",
+        "male3.jpeg",
+        "male4.jpeg",
+        "male5.jpeg",
+        "male6.jpeg",
+        "male7.jpeg",
+    ];
+
+    const profilePicturesFemale = [
+        "female1.jpeg",
+        "female2.jpeg",
+        "female3.jpeg",
+        "female4.jpeg",
+        "female5.jpeg",
+        "female6.jpeg",
+        "female7.jpeg",
+    ];
+
+    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Default</h2>`;
+    profilePicturesDefault.forEach((profilePicture) => {
+        profilePictureDiv.appendChild(createImageElement(profilePicture));
+    });
+
+    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Nature</h2>`;
+    profilePicturesNature.forEach((profilePicture) => {
+        profilePictureDiv.appendChild(createImageElement(profilePicture));
+    });
+
+    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Males</h2>`;
+    profilePicturesMale.forEach((profilePicture) => {
+        profilePictureDiv.appendChild(createImageElement(profilePicture));
+    });
+
+    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Females</h2>`;
+    profilePicturesFemale.forEach((profilePicture) => {
+        profilePictureDiv.appendChild(createImageElement(profilePicture));
+    });
+
+    responseDiv.innerHTML = `<h1 class="profile-picture-title">Select a profile picture</h1>`;
+    responseDiv.appendChild(profilePictureDiv);
+    modalDialog.classList.add("modal-big");
+    modal.show();
+
+    const modalButton = document.querySelector("#modal .modal-body button");
+    modalButton.addEventListener("click", () => {
+        modalDialog.classList.remove("modal-big");
+    });
+}
+
+async function updateProfilePicture(profilePicture) {
+    modalDialog.classList.remove("modal-big");
+    responseDiv.innerHTML = `
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Updating profile picture...</span>
+    </div>
+    `;
+    modal.show();
+
+    const response = await fetch(`${endpoint}/user/update/profilePicture`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+        body: JSON.stringify({ profilePicture }),
+    });
+
+    if (response.ok) {
+        const user = await response.json();
+
+        responseDiv.innerHTML = `
+        <p class="success">Profile picture updated successfully</p>
+        <p class="redirect-time"></p>
+        `;
+
+        const redirectTimeElement = document.querySelector(
+            ".modal-body .content .redirect-time"
+        );
+        let redirectTime = 4;
+        const redirectInterval = setInterval(() => {
+            redirectTimeElement.innerText =
+                redirectTime === 0
+                    ? "Reloading..."
+                    : `Reloading in ${--redirectTime}...`;
+            if (redirectTime <= 0) {
+                clearInterval(redirectInterval);
+
+                localStorage.setItem("user", JSON.stringify(user));
+
+                window.location.reload();
+            }
+        }, 1000);
+    } else {
+        responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
+    }
+}
+
+function createImageElement(profilePicture) {
+    const img = document.createElement("img");
+    img.src = `../../assets/images/profiles/${profilePicture}`;
+    img.classList.add("rounded-circle", "profile-picture-item");
+    img.classList.add("profile-picture");
+    img.addEventListener("click", () => {
+        updateProfilePicture(profilePicture);
+    });
+    return img;
 }
 
 document.addEventListener("DOMContentLoaded", init);

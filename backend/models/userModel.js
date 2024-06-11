@@ -13,6 +13,7 @@ export class User {
     _currentStocks;
     _staredStocks;
     _favoriteStock;
+    _profilePicture;
 
     static from(user) {
         const newUser = new User();
@@ -23,6 +24,7 @@ export class User {
         newUser._currentStocks = user.currentStocks;
         newUser._staredStocks = user.staredStocks;
         newUser._favoriteStock = user.favoriteStock;
+        newUser._profilePicture = user.profilePicture;
         return newUser;
     }
 
@@ -170,6 +172,18 @@ export class User {
         }
     }
 
+    static updateProfilePicture(id, profilePicture) {
+        const user = userController.getById(id);
+
+        if (!user) {
+            return [null, [404, "user not found"]];
+        } else {
+            user.profilePicture = profilePicture;
+            userController.update(user);
+            return [User.from(user), [200, "profile picture updated"]];
+        }
+    }
+
     getData() {
         return {
             id: this._id,
@@ -179,6 +193,7 @@ export class User {
             currentStocks: this._currentStocks ? this._currentStocks : [],
             staredStocks: this._staredStocks ? this._staredStocks : [],
             favoriteStock: this._favoriteStock,
+            profilePicture: this._profilePicture ? this._profilePicture : "",
         };
     }
 

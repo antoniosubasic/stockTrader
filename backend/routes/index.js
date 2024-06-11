@@ -121,6 +121,37 @@ app.post("/user/update/username", (req, res) => {
     }
 });
 
+app.post("/user/update/profilePicture", (req, res) => {
+    const { profilePicture } = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!profilePicture) {
+        return res.status(400).send("missing profilePicture");
+    }
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const [user, [status, message]] = User.updateProfilePicture(
+                decoded.id,
+                profilePicture
+            );
+
+            if (user) {
+                const userData = user.getData();
+                return res.status(status).json({ user: userData });
+            } else {
+                return res.status(status).send(message);
+            }
+        } catch (error) {
+            return res.status(401).send("invalid token");
+        }
+    } else {
+        return res.status(401).send("missing token");
+    }
+});
+
 app.post("/user/signup", (req, res) => {
     const { username, password } = req.body;
     const [status, message] = User.signUp(username, password);
@@ -206,7 +237,9 @@ app.post("/market/buy", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!symbol || !quantity) {
-        return res.status(400).send("missing symbol or quantity query parameter");
+        return res
+            .status(400)
+            .send("missing symbol or quantity query parameter");
     }
 
     if (token) {
@@ -271,7 +304,9 @@ app.post("/market/sell", async (req, res) => {
             const { symbol, quantity } = data;
 
             if (!symbol || !quantity) {
-                return res.status(400).send("missing symbol or quantity query parameter");
+                return res
+                    .status(400)
+                    .send("missing symbol or quantity query parameter");
             }
 
             if (User.exists(decoded.id, decoded.name)) {
