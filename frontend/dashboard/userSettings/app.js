@@ -476,6 +476,17 @@ function handleUserProfileClick() {
         "female7.jpeg",
     ];
 
+    const profilePictureCar = [
+        "car1.jpeg",
+        "car2.jpeg",
+        "car3.jpeg",
+        "car4.jpeg",
+        "car5.jpeg",
+        "car6.jpeg",
+        "car7.jpeg",
+        "car8.jpeg",
+    ];
+
     function appendImagesToDiv(category, imagesArray) {
         const div = document.createElement("div");
         profilePictureDiv.appendChild(div);
@@ -497,6 +508,7 @@ function handleUserProfileClick() {
     appendImagesToDiv("Nature", profilePicturesNature);
     appendImagesToDiv("Males", profilePicturesMale);
     appendImagesToDiv("Females", profilePicturesFemale);
+    appendImagesToDiv("Cars", profilePictureCar);
 
     profilePictureModalDiv.innerHTML = `<h1 class="profile-picture-title">Select a profile picture</h1>`;
     profilePictureModalDiv.appendChild(profilePictureDiv);
