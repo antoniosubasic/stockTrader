@@ -19,8 +19,7 @@ app.post("/user/signin", (req, res) => {
 
     if (user) {
         const userData = user.getData();
-        const { balance, stocks, ...jwtData } = userData;
-        const token = jwt.sign(jwtData, process.env.JWT_SECRET);
+        const token = jwt.sign(userData, process.env.JWT_SECRET);
         return res.status(status).json({ user: userData, token });
     } else {
         return res.status(status).send(message);

@@ -2,8 +2,9 @@ import auth from "../../assets/scripts/auth.js";
 import endpoint from "../../assets/scripts/config.js";
 
 let responseDiv;
-let modalDialog;
 let modal;
+let profilePictureModalDiv;
+let profilePictureModal;
 
 async function init() {
     if (!(await auth())) {
@@ -24,8 +25,13 @@ async function init() {
     );
 
     responseDiv = document.querySelector("#modal .modal-body .content");
-    modalDialog = document.querySelector("#modal .modal-dialog");
     modal = new bootstrap.Modal(document.getElementById("modal"));
+    profilePictureModalDiv = document.querySelector(
+        "#profile-picture-modal .modal-body .content"
+    );
+    profilePictureModal = new bootstrap.Modal(
+        document.getElementById("profile-picture-modal")
+    );
 
     const updatePasswordForm = document.getElementById("update-password-form");
     const updateUsernameForm = document.getElementById("update-username-form");
@@ -186,7 +192,7 @@ async function updateFavoriteMarkets(market) {
                 });
 
             const redirectTimeElement = document.querySelector(
-                ".modal-body .content .redirect-time"
+                "#modal .modal-body .content .redirect-time"
             );
             let redirectTime = 4;
             const redirectInterval = setInterval(() => {
@@ -267,7 +273,7 @@ async function handleUpdatePassword(updatePasswordForm) {
             `;
 
             const redirectTimeElement = document.querySelector(
-                ".modal-body .content .redirect-time"
+                "#modal .modal-body .content .redirect-time"
             );
             let redirectTime = 4;
             const redirectInterval = setInterval(() => {
@@ -330,7 +336,7 @@ async function handleUpdateUsername(updateUsernameForm) {
             `;
 
             const redirectTimeElement = document.querySelector(
-                ".modal-body .content .redirect-time"
+                "#modal .modal-body .content .redirect-time"
             );
             let redirectTime = 4;
             const redirectInterval = setInterval(() => {
@@ -392,7 +398,7 @@ async function handleDeleteAccount(deleteAccountForm) {
                 `;
 
                 const redirectTimeElement = document.querySelector(
-                    ".modal-body .content .redirect-time"
+                    "#modal .modal-body .content .redirect-time"
                 );
                 let redirectTime = 4;
                 const redirectInterval = setInterval(() => {
@@ -418,6 +424,17 @@ async function handleDeleteAccount(deleteAccountForm) {
 }
 
 function handleUserProfileClick() {
+    function createImageElement(profilePicture) {
+        const img = document.createElement("img");
+        img.src = `../../assets/images/profiles/${profilePicture}`;
+        img.classList.add("rounded-circle", "profile-picture-item");
+        img.classList.add("profile-picture");
+        img.addEventListener("click", () => {
+            updateProfilePicture(profilePicture);
+        });
+        return img;
+    }
+
     const profilePictureDiv = document.createElement("div");
 
     const profilePicturesDefault = [
@@ -459,39 +476,35 @@ function handleUserProfileClick() {
         "female7.jpeg",
     ];
 
-    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Default</h2>`;
-    profilePicturesDefault.forEach((profilePicture) => {
-        profilePictureDiv.appendChild(createImageElement(profilePicture));
-    });
+    function appendImagesToDiv(category, imagesArray) {
+        const div = document.createElement("div");
+        profilePictureDiv.appendChild(div);
 
-    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Nature</h2>`;
-    profilePicturesNature.forEach((profilePicture) => {
-        profilePictureDiv.appendChild(createImageElement(profilePicture));
-    });
+        const h2 = document.createElement("h2");
+        const subDiv = document.createElement("div");
 
-    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Males</h2>`;
-    profilePicturesMale.forEach((profilePicture) => {
-        profilePictureDiv.appendChild(createImageElement(profilePicture));
-    });
+        h2.textContent = category;
+        h2.classList.add("profile-picture-category");
+        div.appendChild(h2);
+        div.appendChild(subDiv);
 
-    profilePictureDiv.innerHTML += `<h2 class="profile-picture-category">Females</h2>`;
-    profilePicturesFemale.forEach((profilePicture) => {
-        profilePictureDiv.appendChild(createImageElement(profilePicture));
-    });
+        imagesArray.forEach((profilePicture) => {
+            subDiv.appendChild(createImageElement(profilePicture));
+        });
+    }
 
-    responseDiv.innerHTML = `<h1 class="profile-picture-title">Select a profile picture</h1>`;
-    responseDiv.appendChild(profilePictureDiv);
-    modalDialog.classList.add("modal-big");
-    modal.show();
+    appendImagesToDiv("Default", profilePicturesDefault);
+    appendImagesToDiv("Nature", profilePicturesNature);
+    appendImagesToDiv("Males", profilePicturesMale);
+    appendImagesToDiv("Females", profilePicturesFemale);
 
-    const modalButton = document.querySelector("#modal .modal-body button");
-    modalButton.addEventListener("click", () => {
-        modalDialog.classList.remove("modal-big");
-    });
+    profilePictureModalDiv.innerHTML = `<h1 class="profile-picture-title">Select a profile picture</h1>`;
+    profilePictureModalDiv.appendChild(profilePictureDiv);
+    profilePictureModal.show();
 }
 
 async function updateProfilePicture(profilePicture) {
-    modalDialog.classList.remove("modal-big");
+    profilePictureModal.hide();
     responseDiv.innerHTML = `
     <div class="spinner-border" role="status">
         <span class="visually-hidden">Updating profile picture...</span>
@@ -509,12 +522,20 @@ async function updateProfilePicture(profilePicture) {
     });
 
     if (response.ok) {
-        const user = await response.json();
+        const user = JSON.parse(localStorage.getItem("user"));
+        user.profilePicture = profilePicture;
 
         responseDiv.innerHTML = `
         <p class="success">Profile picture updated successfully</p>
         <p class="redirect-time"></p>
         `;
+
+        document
+            .querySelector("#modal .modal-body .btn-close")
+            .addEventListener("click", () => {
+                localStorage.setItem("user", JSON.stringify(user));
+                window.location.reload();
+            });
 
         const redirectTimeElement = document.querySelector(
             ".modal-body .content .redirect-time"
@@ -529,24 +550,12 @@ async function updateProfilePicture(profilePicture) {
                 clearInterval(redirectInterval);
 
                 localStorage.setItem("user", JSON.stringify(user));
-
                 window.location.reload();
             }
         }, 1000);
     } else {
         responseDiv.innerHTML = `<p class="error">${await response.text()}</p>`;
     }
-}
-
-function createImageElement(profilePicture) {
-    const img = document.createElement("img");
-    img.src = `../../assets/images/profiles/${profilePicture}`;
-    img.classList.add("rounded-circle", "profile-picture-item");
-    img.classList.add("profile-picture");
-    img.addEventListener("click", () => {
-        updateProfilePicture(profilePicture);
-    });
-    return img;
 }
 
 document.addEventListener("DOMContentLoaded", init);
