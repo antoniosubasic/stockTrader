@@ -1,4 +1,5 @@
 import endpoint from "../assets/scripts/config.js";
+import auth from "../assets/scripts/auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const signInForm = document.getElementById("signin-form");
@@ -28,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (response.ok) {
-                if (localStorage.getItem("jwt")) {
+                if (await auth()) {
                     signInForm.password.value = "";
                     responseDiv.innerHTML = '<p class="error">User already signed in</p>';
                 } else {
