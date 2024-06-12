@@ -442,6 +442,9 @@ function handleUserProfileClick() {
         "default2.jpeg",
         "default3.jpeg",
         "default4.jpeg",
+        "default5.jpeg",
+        "default6.jpeg",
+        "default7.jpeg",
     ];
 
     const profilePicturesNature = [
@@ -466,6 +469,10 @@ function handleUserProfileClick() {
         "male7.jpeg",
         "male8.jpg",
         "male9.jpg",
+        "male10.jpeg",
+        "male11.jpeg",
+        "male12.jpeg",
+        "male13.jpeg", 
     ];
 
     const profilePicturesFemale = [
