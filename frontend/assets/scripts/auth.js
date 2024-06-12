@@ -5,6 +5,8 @@ export default async function auth() {
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!jwt || !user) {
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("user");
         return false;
     }
 
