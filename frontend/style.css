@@ -16,7 +16,7 @@ main img {
     width: 30%;
 }
 
-#stockOverview {
+.heading {
     text-align: center;
 }
 
@@ -25,5 +25,34 @@ main img {
 }
 
 #chart-box {
-    margin-top: 8rem;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 80vh;
+    width: 85vw;
+}
+
+#chart {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stock-item span {
+    font-size: 1.1rem;
+}
+.stock-item-display span {
+    font-weight: 650;
+    font-size: 1.2rem;
 }
