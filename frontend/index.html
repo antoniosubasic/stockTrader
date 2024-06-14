@@ -13,8 +13,8 @@
         />
         <link rel="stylesheet" href="./assets/styles/navbar.css" />
         <link rel="stylesheet" href="./assets/styles/main.css" />
-        <link rel="stylesheet" href="./style.css" />
         <link rel="stylesheet" href="./assets/styles/searchMarkets.css" />
+        <link rel="stylesheet" href="./style.css" />
         <script type="module" src="./assets/scripts/navbar.js" defer></script>
         <script type="module" src="./app.js" defer></script>
     </head>
@@ -63,7 +63,7 @@
         <main>
             <div class="main-centered">
                 <div id="intro">
-                    <h1 sytle="font-family: Inter;">Trade Smart, Win Big</h1>
+                    <h1>Trade Smart, Win Big</h1>
                     <p>
                         Test your trading skills, compete with friends, and
                         climb to the top. Are you ready to become the next stock
@@ -78,7 +78,7 @@
         </main>
 
         <div class="container" id="InformationDiv">
-            <h1 id="stockOverview">Stock Market Overview</h1>
+            <h1 class="heading">Stock Market Overview</h1>
             <p>
                 <span class="bold">What is this?</span> <br />
                 This is an innovative stock market simulator designed to give
@@ -117,8 +117,21 @@
             </p>
         </div>
 
-        <div id="chart-box">
-            <div id="chart-container"></div>
+        <div>
+            <h1 class="heading" style="margin-top: 4rem">
+                Example Stock Chart
+            </h1>
+            <div id="chart-box">
+                <div id="chart-container"></div>
+            </div>
+        </div>
+
+        <div class="container" id="stocks">
+            <h1 class="heading" style="margin-top: 4rem">
+                Top Stock Gainers & Losers
+            </h1>
+            <div id="stock-gainers"></div>
+            <div id="stock-losers"></div>
         </div>
 
         <div class="modal" tabindex="-1" id="modal" aria-hidden="true">
