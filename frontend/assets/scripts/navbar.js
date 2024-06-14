@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;">
                 <img src="${path}/assets/images/profiles/${
             user.profilePicture ? user.profilePicture : "default1.jpeg"
-        }" class="rounded-circle" style="height: 2rem; margin-right: 0.5rem;"> Hello, ${
+        }" class="rounded-circle" style="height: 3rem; margin-right: 0.5rem;"> Hello, ${
             user.name
         }
             </button>
