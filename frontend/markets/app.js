@@ -229,6 +229,7 @@ function filterAndDisplayMarkets(value, resultsDiv, markets) {
 
             resultItem.addEventListener("click", async () => {
                 await performSearch(market.symbol, market.name);
+                resultsDiv.innerHTML = "";
             });
             newDiv.appendChild(resultItem);
         });
