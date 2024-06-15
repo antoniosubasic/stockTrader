@@ -40,3 +40,38 @@ body {
     justify-self: center;
     align-self: center;
 }
+
+#modal .modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+}
+
+#modal .modal-body p {
+    text-align: center;
+    margin: 0;
+}
+
+#modal .modal-body .content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+#modal .modal-body .content p {
+    text-align: center;
+    margin: 0;
+}
+
+#modal .modal-body .content .error {
+    color: red;
+}
+
+#modal .modal-body .content .success {
+    color: green;
+}

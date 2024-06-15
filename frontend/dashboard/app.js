@@ -230,7 +230,7 @@ async function initBuyFormHandler() {
         modal.hide();
 
         const maxBuy = Math.floor(
-            JSON.parse(localStorage.getItem("user")).balance /
+            (JSON.parse(localStorage.getItem("user")).balance - 25) /
                 market.stockPrices[market.stockPrices.length - 1].close
         );
 
@@ -410,10 +410,14 @@ async function generateMyStockTable(stock, tbody) {
 
     if (response.status === 429) {
         modalBody.innerHTML = `
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p>Please note that having a lot of stocks may take a while to load</p>`;
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h4>Too many requests!</h4>
+            <p>
+                Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. We are currently waiting for the limit to reset. Please try again in a minute.
+            </p>
+        `;
 
         await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
         return generateMyStockTable(stock, tbody);
@@ -529,10 +533,14 @@ async function generateSellStockTable(stock, tbody) {
 
     if (response.status === 429) {
         modalBody.innerHTML = `
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p>Please note that having a lot of stocks may take a while to load</p>`;
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h4>Too many requests!</h4>
+            <p>
+                Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. We are currently waiting for the limit to reset. Please try again in a minute.
+            </p>
+        `;
 
         await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
         return await generateSellStockTable(stock, tbody);
@@ -590,7 +598,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     markets = await fetchMarkets(`${endpoint}/markets`);
     modal = new bootstrap.Modal(document.getElementById("modal"));
-    modalBody = document.querySelector("#modal div.content");
+    modalBody = document.querySelector("#modal .modal-body .content");
+    const closeButton = document.querySelector('#modal .btn-close');
+
+    closeButton.addEventListener('click', () => {
+        modal.hide();
+    });
 
     document.getElementById("share-in-stocks-value").innerText = formatCurrency(
         user.transactions

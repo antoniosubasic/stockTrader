@@ -14,7 +14,7 @@ async function init() {
     const markets = await fetchMarkets(`${endpoint}/markets`);
 
     modal = new bootstrap.Modal(document.getElementById("modal"));
-    modalContent = document.querySelector("#modal .modal-content");
+    modalContent = document.querySelector("#modal .modal-body .content");
 
     const urlParams = new URLSearchParams(window.location.search);
     const symbol = urlParams.get("symbol");
@@ -269,12 +269,14 @@ async function updateRecentViewed() {
 
         if (response.status === 429) {
             modalContent.innerHTML = `
-                <div class="modal-body centered">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p>Please have patience currently too many requests are being made to the server. This can take a while.</p>
-                </div>`;
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h4>Too many requests!</h4>
+                <p>
+                    Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. We are currently waiting for the limit to reset. Please try again in a minute.
+                </p>
+                `;
             modal.show();
 
             await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute

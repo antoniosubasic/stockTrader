@@ -15,48 +15,54 @@ export class Drawer {
         this.market;
         this.stockPrices;
         this.modal = new bootstrap.Modal(document.getElementById("modal"));
-        this.modalContent = document.querySelector("#modal .modal-content");
+        this.modalBody = document.querySelector("#modal .modal-body .content");
     }
 
     async getMarket() {
-        this.modalContent.innerHTML = `
-            <div class="modal-body centered">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+        this.modalBody.innerHTML = `
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
         `;
         this.modal.show();
 
-        const response = await fetch(
-            `${endpoint}/market?symbol=${this.symbol}`
-        );
+        try {
+            const response = await fetch(
+                `${endpoint}/market?symbol=${this.symbol}`
+            );
 
-        if (response.ok) {
-            this.market = await response.json();
-            this.stockPrices = this.market.stockPrices;
-            this.modal.hide();
-            return true;
-        } else if (response.status === 429) {
-            // API data limit reached (too many requests)
-            this.modalContent.innerHTML = `
-                <div class="modal-body alert alert-danger grid" role="alert">
-                    <h4 class="alert-heading">Too many requests!</h4>
+            if (response.ok) {
+                this.market = await response.json();
+                this.stockPrices = this.market.stockPrices;
+                return true;
+            } else if (response.status === 429) {
+                // API data limit reached (too many requests)
+                this.modalBody.innerHTML = `
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4>Too many requests!</h4>
                     <p>
-                        Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. Please try again in a few minutes.
+                        Sorry, you have reached the limit of requests for our free API at <a href="https://polygon.io/">Polygon.io</a>. We are currently waiting for the limit to reset. Please try again in a minute.
                     </p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-            `;
+                `;
 
-            return false;
-        } else {
-            this.modalContent.innerHTML = `
-                <div class="modal-body centered">
+                await new Promise((resolve) => setTimeout(resolve, 60_000)); // 1 minute
+                return await this.getMarket();
+            } else {
+                this.modalBody.innerHTML = `
                     <p class="error">${await response.text()}</p>
-                </div>
+                `;
+                return false;
+            }
+        } catch (error) {
+            console.error(error);
+            this.modalBody.innerHTML = `
+                <p class="error">An error occurred: ${error.message}</p>
             `;
             return false;
+        } finally {
+            this.modal.hide();
         }
     }
 
@@ -196,9 +202,9 @@ export class Drawer {
             { days: 6, label: "1W" },
             { days: 11, label: "2W" },
             { days: 22, label: "1M" },
-            { days: 44, label: "2M" },
-            { days: 132, label: "6M" },
-            { days: 262, label: "1Y" },
+            { days: 43, label: "2M" },
+            { days: 126, label: "6M" },
+            { days: 251, label: "1Y" },
             { days: this.stockPrices.length, label: "All" },
         ];
 
